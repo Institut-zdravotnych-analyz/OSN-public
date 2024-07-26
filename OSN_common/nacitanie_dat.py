@@ -5,6 +5,81 @@ from OSN_common.pomocne_funkcie import ziskaj_data_path
 
 _data_path = ziskaj_data_path()
 
+
+def nacitaj_zoznam_ms(verzia):
+    return pd.read_csv(
+        _data_path
+        / "03_Prevodníky"
+        / "Vyhláška"
+        / f"{verzia}"
+        / f"zoznam_ms_{verzia}.csv",
+        sep=";",
+    )
+
+
+def nacitaj_programovy_profil(rok, verzia):
+    return pd.read_csv(
+        _data_path
+        / "03_Prevodníky"
+        / "Vyhláška"
+        / f"{verzia}"
+        / f"programovy_profil_{verzia}_{rok}.csv",
+        sep=";",
+    )
+
+
+def nacitaj_vsetku_starostlivost(rok):
+    return pd.read_csv(
+        _data_path / "01_Všetka starostlivosť" / f"osn_vsetka_starostlivost_{rok}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            kod_zp="Int8",
+            vek_dni="Int16",
+            vek_roky="Int16",
+            hmotnost="Int16",
+            upv="Int16",
+            erv="float",
+        ),
+        parse_dates=["datum_od", "datum_do", "datum_narodenia"],
+        date_format="ISO8601",
+    )
+
+
+def nacitaj_vystup_algoritmu(rok, verzia):
+    _usecols = [0, 7] if verzia == "v2024.2" else [0, 9]
+    return pd.read_csv(
+        _data_path
+        / "07_Algoritmus"
+        / f"algoritmus_{verzia}_osn_vsetka_starostlivost_{rok}_output.csv",
+        sep=";",
+        usecols=_usecols,
+        names=["id_hp", "ms"],
+        dtype="str",
+        header=0,
+    )
+
+
+def nacitaj_vsetku_starostlivost_s_ms(rok, verzia):
+    return pd.read_csv(
+        _data_path
+        / "01_Všetka starostlivosť"
+        / f"osn_vsetka_starostlivost_{rok}_ms_{verzia}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            kod_zp="Int8",
+            vek_dni="Int16",
+            vek_roky="Int16",
+            hmotnost="Int16",
+            upv="Int16",
+            erv="float",
+        ),
+        parse_dates=["datum_od", "datum_do", "datum_narodenia"],
+        date_format="ISO8601",
+    )
+
+
 _prevodove_subory = {"pzs_12": "03_Prevodníky/pzs_12_prevodnik.csv"}
 
 
