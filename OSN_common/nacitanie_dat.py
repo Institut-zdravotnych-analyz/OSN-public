@@ -174,15 +174,17 @@ def nacitaj_vsetku_starostlivost_s_ms(rok, verzia):
 
 _predvolene_argumenty_nacitania = {
     "uzs_jzs": {
-        "usecols": [0, 1, 2, 3, 4, 6, 7, 9, 10, 11, 12, 14, 17],
+        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 17],
         "names": [
             "kod_zp",
             "id_poistenca",
             "obdobie",
             "pzs_12",
             "id_hp",
+            "novorodenec",
             "datum_od",
             "datum_do",
+            "pohyb_poistenca",
             "dgn_prijem",
             "dgn_prepustenie",
             "kod_jednodnoveho_vykonu",
@@ -197,7 +199,29 @@ _predvolene_argumenty_nacitania = {
         "delimiter": "|",
     },
     "hp": {
-        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 17, 19, 20, 21, 26],
+        "usecols": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            19,
+            20,
+            21,
+            26,
+        ],
         "names": [
             "kod_zp",
             "id_hp_pzs",
@@ -212,6 +236,9 @@ _predvolene_argumenty_nacitania = {
             "hmotnost",
             "upv",
             "datum_narodenia",
+            "druh_prijatia",
+            "dovod_prijatia",
+            "dovod_prepustenia",
             "hlavna_diagnoza",
             "drg",
             "erv",
@@ -261,12 +288,15 @@ _predvolene_argumenty_nacitania = {
         "delimiter": "|",
     },
     "poistenci": {
-        "usecols": [0, 1, 2, 3, 7, 8, 9, 10],
+        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         "names": [
             "kod_zp",
             "id_poistenca",
             "datum_narodenia",
             "pohlavie",
+            "datum_poistenia_od",
+            "datum_poistenia_do",
+            "dovod_ukoncenia",
             "kod_prechodneho_pobytu",
             "psc_prechodneho_pobytu",
             "kod_trvaleho_pobytu",
@@ -274,7 +304,11 @@ _predvolene_argumenty_nacitania = {
         ],
         "header": 0,
         "dtype": defaultdict(lambda: "str", kod_zp="Int8"),
-        "parse_dates": ["datum_narodenia"],
+        "parse_dates": [
+            "datum_narodenia",
+            "datum_poistenia_od",
+            "datum_poistenia_do",
+        ],
         "date_format": "ISO8601",
         "delimiter": "|",
     },
@@ -291,6 +325,127 @@ _poistovne = {
     24: {
         "nazov": "dovera",
         "subory": {
+            2021: {
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2021_24_01_UZS_JZS_UDAJE.csv"],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                        }
+                    ],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2021_24_02_HP_UDAJE.csv"],
+                    "argumenty": [
+                        {
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                8,
+                                9,
+                                10,
+                                11,
+                                15,
+                                17,
+                                18,
+                                19,
+                                24,
+                            ],
+                            "names": [
+                                "kod_zp",
+                                "id_hp_pzs",
+                                "id_hp",
+                                "pzs_6",
+                                "datum_od",
+                                "datum_do",
+                                "osetrovacia_doba",
+                                "vek_dni",
+                                "vek_roky",
+                                "hmotnost",
+                                "upv",
+                                "hlavna_diagnoza",
+                                "drg",
+                                "erv",
+                                "zlucene_hp",
+                                "typ_starostlivosti",
+                            ],
+                            "parse_dates": ["datum_od", "datum_do"],
+                        }
+                    ],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2021_24_03_HP_PREKLADY.csv"],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "pzs_12",
+                                "datum_od",
+                                "datum_do",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "vdg": {
+                    "nazvy_suborov": ["2021_24_04_HP_VDG.csv"],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "usecols": [0, 1, 3],
+                            "names": [
+                                "id_hp",
+                                "vdg",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "vykony": {
+                    "nazvy_suborov": ["2021_24_05_HP_ZV.csv"],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "kod_vykonu",
+                                "lokalizacia_vykonu",
+                                "datum_vykonu",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "poistenci": {
+                    "nazvy_suborov": ["2021_24_09_UZS_POISTENCI.csv"],
+                    "argumenty": [
+                        {
+                            "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                            "names": [
+                                "id_poistenca",
+                                "datum_narodenia",
+                                "pohlavie",
+                                "datum_poistenia_od",
+                                "datum_poistenia_do",
+                                "dovod_ukoncenia",
+                                "kod_trvaleho_pobytu",
+                                "psc_trvaleho_pobytu",
+                                "kod_prechodneho_pobytu",
+                                "psc_prechodneho_pobytu",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+            },
             2022: {
                 "uzs_jzs": {"nazvy_suborov": ["01_UZS_JZS.csv"], "argumenty": [{}]},
                 "hp": {"nazvy_suborov": ["02_HP.csv"], "argumenty": [{}]},
@@ -328,6 +483,168 @@ _poistovne = {
     25: {
         "nazov": "vzp",
         "subory": {
+            2021: {
+                "uzs_jzs": {
+                    "nazvy_suborov": [
+                        "2021_25_01_JZS_UDAJE.csv",
+                        "2021_25_01_UZS_UDAJE.csv",
+                    ],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "header": None,
+                            "usecols": [0, 1, 2, 3, 5, 6, 7, 8, 10, 11, 13, 16, 17],
+                            "names": [
+                                "id_poistenca",
+                                "obdobie",
+                                "pzs_12",
+                                "id_hp",
+                                "datum_od",
+                                "datum_do",
+                                "dgn_prijem",
+                                "dgn_prepustenie",
+                                "kod_jednodnoveho_vykonu",
+                                "kod_operacneho_vykonu",
+                                "typ_hospitalizacie",
+                                "typ_starostlivosti",
+                                "kod_zp",
+                            ],
+                        },
+                        {
+                            "header": None,
+                            "usecols": [0, 1, 2, 3, 5, 6, 7, 8, 10, 11, 13, 16, 17],
+                            "names": [
+                                "id_poistenca",
+                                "obdobie",
+                                "pzs_12",
+                                "id_hp",
+                                "datum_od",
+                                "datum_do",
+                                "dgn_prijem",
+                                "dgn_prepustenie",
+                                "kod_jednodnoveho_vykonu",
+                                "kod_operacneho_vykonu",
+                                "typ_hospitalizacie",
+                                "typ_starostlivosti",
+                                "kod_zp",
+                            ],
+                        },
+                    ],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2021_25_02_HP_UDAJE.csv"],
+                    "argumenty": [
+                        {
+                            "header": None,
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                8,
+                                9,
+                                10,
+                                11,
+                                15,
+                                17,
+                                18,
+                                19,
+                                24,
+                            ],
+                            "names": [
+                                "kod_zp",
+                                "id_hp_pzs",
+                                "id_hp",
+                                "pzs_6",
+                                "datum_od",
+                                "datum_do",
+                                "osetrovacia_doba",
+                                "vek_dni",
+                                "vek_roky",
+                                "hmotnost",
+                                "upv",
+                                "hlavna_diagnoza",
+                                "drg",
+                                "erv",
+                                "zlucene_hp",
+                                "typ_starostlivosti",
+                            ],
+                            "parse_dates": ["datum_od", "datum_do"],
+                        }
+                    ],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2021_25_03_HP_PREKLADY.csv"],
+                    "argumenty": [
+                        {
+                            "header": None,
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "pzs_12",
+                                "datum_od",
+                                "datum_do",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "vdg": {
+                    "nazvy_suborov": ["2021_25_04_HP_VDG.csv"],
+                    "argumenty": [
+                        {
+                            "header": None,
+                            "usecols": [0, 1, 3],
+                            "names": [
+                                "id_hp",
+                                "vdg",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "vykony": {
+                    "nazvy_suborov": ["2021_25_05_HP_ZV.csv"],
+                    "argumenty": [
+                        {
+                            "header": None,
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "kod_vykonu",
+                                "lokalizacia_vykonu",
+                                "datum_vykonu",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "poistenci": {
+                    "nazvy_suborov": ["2021_25_09_UZS_POISTENCI.csv"],
+                    "argumenty": [
+                        {
+                            "header": None,
+                            "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                            "names": [
+                                "id_poistenca",
+                                "datum_narodenia",
+                                "pohlavie",
+                                "datum_poistenia_od",
+                                "datum_poistenia_do",
+                                "dovod_ukoncenia",
+                                "kod_trvaleho_pobytu",
+                                "psc_trvaleho_pobytu",
+                                "kod_prechodneho_pobytu",
+                                "psc_prechodneho_pobytu",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+            },
             2022: {
                 "uzs_jzs": {
                     "nazvy_suborov": ["2022_25_01_UZS_JZS.csv"],
@@ -397,6 +714,141 @@ _poistovne = {
     27: {
         "nazov": "union",
         "subory": {
+            2021: {
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2021_27_01_UZS_JZS_UDAJE.csv"],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "usecols": [0, 1, 2, 3, 5, 6, 8, 9, 10, 11, 13, 16, 17],
+                            "names": [
+                                "id_poistenca",
+                                "obdobie",
+                                "pzs_12",
+                                "id_hp",
+                                "datum_od",
+                                "datum_do",
+                                "dgn_prijem",
+                                "dgn_prepustenie",
+                                "kod_jednodnoveho_vykonu",
+                                "kod_operacneho_vykonu",
+                                "typ_hospitalizacie",
+                                "typ_starostlivosti",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2021_27_02_HP_UDAJE.csv"],
+                    "argumenty": [
+                        {
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                8,
+                                9,
+                                10,
+                                11,
+                                15,
+                                17,
+                                18,
+                                19,
+                                24,
+                            ],
+                            "names": [
+                                "kod_zp",
+                                "id_hp_pzs",
+                                "id_hp",
+                                "pzs_6",
+                                "datum_od",
+                                "datum_do",
+                                "osetrovacia_doba",
+                                "vek_dni",
+                                "vek_roky",
+                                "hmotnost",
+                                "upv",
+                                "hlavna_diagnoza",
+                                "drg",
+                                "erv",
+                                "zlucene_hp",
+                                "typ_starostlivosti",
+                            ],
+                            "parse_dates": ["datum_od", "datum_do"],
+                        },
+                    ],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2021_27_03_HP_PREKLADY.csv"],
+                    "argumenty": [
+                        {
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "pzs_12",
+                                "datum_od",
+                                "datum_do",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "vdg": {
+                    "nazvy_suborov": ["2021_27_04_HP_VDG.csv"],
+                    "argumenty": [
+                        {
+                            "usecols": [0, 1, 3],
+                            "names": [
+                                "id_hp",
+                                "vdg",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "vykony": {
+                    "nazvy_suborov": ["2021_27_05_HP_ZV.csv"],
+                    "argumenty": [
+                        {
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "kod_vykonu",
+                                "lokalizacia_vykonu",
+                                "datum_vykonu",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+                "poistenci": {
+                    "nazvy_suborov": ["2021_27_09_UZS_POISTENCI.csv"],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                            "names": [
+                                "id_poistenca",
+                                "datum_narodenia",
+                                "pohlavie",
+                                "datum_poistenia_od",
+                                "datum_poistenia_do",
+                                "dovod_ukoncenia",
+                                "kod_prechodneho_pobytu",
+                                "psc_prechodneho_pobytu",
+                                "kod_trvaleho_pobytu",
+                                "psc_trvaleho_pobytu",
+                                "kod_zp",
+                            ],
+                        }
+                    ],
+                },
+            },
             2022: {
                 "uzs_jzs": {
                     "nazvy_suborov": ["osn_2022_27_01_uzs_jzs.csv"],
