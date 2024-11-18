@@ -5,14 +5,171 @@ from OSN_common.pomocne_funkcie import ziskaj_data_path
 
 _data_path = ziskaj_data_path()
 
-_prevodove_subory = {"pzs_12": "03_Prevodníky/pzs_12_prevodnik.csv"}
+_prevodove_subory = {
+    "pzs_12": {
+        "cesta": "03_Prevodníky/pzs_12_prevodnik.csv",
+        "argumenty": {"sep": ";", "dtype": "str"},
+    },
+    "psc_na_zuj": {
+        "cesta": "03_Prevodníky/psc_na_zuj.csv",
+        "argumenty": {
+            "sep": ";",
+            "dtype": defaultdict(
+                lambda: "str",
+                {"ZUJ_pravdepodobnost": "float"},
+            ),
+        },
+    },
+}
 
 
-def nacitaj_prevodove_subory(nazov):
-    if cesta := _prevodove_subory.get(nazov):
-        return pd.read_csv(_data_path / cesta, sep=";")
+def nacitaj_prevodovy_subor(nazov):
+    if subor := _prevodove_subory.get(nazov):
+        return pd.read_csv(_data_path / subor["cesta"], **subor["argumenty"])
     else:
         raise ValueError(f"Prevodník s názvom {nazov} neexistuje.")
+
+
+def nacitaj_zoznam_obci():
+    return pd.read_excel(
+        _data_path / "03_Prevodníky" / "KÓDY_OBCE.xlsx",
+        dtype=defaultdict(
+            lambda: "str",
+            {"Počet obyvateľov 2021": "Int64"},
+        ),
+    )
+
+
+def nacitaj_zoznam_poistencov(rok):
+    return pd.read_csv(
+        _data_path / "05_Poistenci" / f"poistenci_vyfiltrovani_{rok}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            kod_zp="Int8",
+        ),
+        parse_dates=["datum_narodenia"],
+        date_format="ISO8601",
+    )
+
+
+def nacitaj_siet_nemocnic(rok):
+    return pd.read_excel(
+        _data_path / "08_Nemocnice" / f"siet_nemocnic_{rok}.xlsx",
+        index_col=[0, 1, 2, 3],
+        header=[0, 1, 2],
+    )
+
+
+def nacitaj_zoznam_vykonov(rok):
+    return pd.read_csv(
+        _data_path / "03_Prevodníky" / f"zoznam_vykonov_{rok}.csv",
+        sep=";",
+        dtype="str",
+        converters={"zoznam_terminalnych_vykonov": eval},
+    )
+
+
+def nacitaj_zoznam_diagnoz(rok):
+    return pd.read_csv(
+        _data_path / "03_Prevodníky" / f"zoznam_diagnoz_{rok}.csv",
+        sep=";",
+        converters={"zoznam_koncovych_diagnoz": eval},
+    )
+
+
+def nacitaj_zoznam_nemocnic():
+    return pd.read_csv(
+        _data_path / "08_Nemocnice" / f"zoznam_nemocnic.csv",
+        sep=";",
+        dtype=defaultdict(lambda: "str", uroven_nemocnice="Int8"),
+    )
+
+
+def nacitaj_zoznam_ms(verzia):
+    return pd.read_csv(
+        _data_path
+        / "03_Prevodníky"
+        / "Vyhláška"
+        / f"{verzia}"
+        / f"zoznam_ms_{verzia}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            zdielana_ms="boolean",
+            uroven_ms_dospeli="Int8",
+            uroven_ms_deti_0="Int8",
+            uroven_ms_deti_1="Int8",
+            uroven_ms_deti_7="Int8",
+            uroven_ms_deti_16="Int8",
+            cislo_programu="Int16",
+        ),
+    )
+
+
+def nacitaj_programovy_profil(rok, verzia):
+    return pd.read_csv(
+        _data_path
+        / "03_Prevodníky"
+        / "Vyhláška"
+        / f"{verzia}"
+        / f"programovy_profil_{verzia}_{rok}.csv",
+        sep=";",
+    )
+
+
+def nacitaj_vsetku_starostlivost(rok):
+    return pd.read_csv(
+        _data_path / "01_Všetka starostlivosť" / f"osn_vsetka_starostlivost_{rok}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            kod_zp="Int8",
+            vek_dni="Int16",
+            vek_roky="Int16",
+            hmotnost="Int16",
+            upv="Int16",
+            erv="float",
+            osetrovacia_doba="Int16",
+        ),
+        parse_dates=["datum_od", "datum_do", "datum_narodenia"],
+        date_format="ISO8601",
+    )
+
+
+def nacitaj_vystup_algoritmu(rok, verzia, prepinace_algoritmu=""):
+    _usecols = [0, 7] if verzia.startswith("v2024.2") else [0, 9]
+    return pd.read_csv(
+        _data_path
+        / "07_Algoritmus"
+        / f"algoritmus_{verzia}{prepinace_algoritmu}_osn_vsetka_starostlivost_{rok}_output.csv",
+        sep=";",
+        usecols=_usecols,
+        names=["id_hp", "ms"],
+        dtype="str",
+        header=0,
+    )
+
+
+def nacitaj_vsetku_starostlivost_s_ms(rok, verzia):
+    return pd.read_csv(
+        _data_path
+        / "01_Všetka starostlivosť"
+        / f"osn_vsetka_starostlivost_{rok}_ms_{verzia}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            kod_zp="Int8",
+            vek_dni="Int16",
+            vek_roky="Int16",
+            hmotnost="Int16",
+            upv="Int16",
+            erv="float",
+            osetrovacia_doba="Int16",
+        ),
+        parse_dates=["datum_od", "datum_do", "datum_narodenia"],
+        date_format="ISO8601",
+    )
 
 
 _predvolene_argumenty_nacitania = {
