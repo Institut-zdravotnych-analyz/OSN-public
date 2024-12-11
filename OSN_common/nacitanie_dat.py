@@ -78,6 +78,28 @@ def nacitaj_zoznam_diagnoz(rok):
     )
 
 
+def nacitaj_zoznam_drg_skupin(rok):
+    return pd.read_csv(
+        _data_path / "03_Prevodníky" / f"zoznam_drg_skupin_{rok}.csv",
+        sep=";",
+        dtype=defaultdict(
+            lambda: "str",
+            {"Relatívne váhy (RV)": float, "Stredná hodnota ošetrovacej doba": float},
+        ),
+    )
+
+
+def nacitaj_vtpn(rok):
+    return pd.read_csv(_data_path / "03_Prevodníky" / f"VTPN_{rok}.csv", sep=";")
+
+
+def nacitaj_signifikantne_operacne_vykony(rok):
+    return pd.read_csv(
+        _data_path / "03_Prevodníky" / f"signifikantne_operacne_vykony_{rok}.csv",
+        sep=";",
+    )
+
+
 def nacitaj_zoznam_nemocnic():
     return pd.read_csv(
         _data_path / "08_Nemocnice" / f"zoznam_nemocnic.csv",
