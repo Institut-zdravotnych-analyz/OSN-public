@@ -1,10 +1,11 @@
 import pandas as pd
 
-from OSN_common.helpers import load_json, DATA_PATH
+from OSN_common.helpers import load_json
+from OSN_common.paths import DATA_PATH
 
 
-LOAD_CSV_ARGS = load_json('poistovne_loading_args.json')
-POISTOVNE = load_json('poistovne.json')
+LOAD_CSV_ARGS = load_json('data/poistovne_loading_args.json')
+POISTOVNE = load_json('data/poistovne.json')
 
 
 def load_data_zp(rok, zoznam_zp):

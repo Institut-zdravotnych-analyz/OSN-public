@@ -3,9 +3,12 @@ import pandas as pd
 from pandas import DataFrame
 from pathlib import Path
 
-from OSN_common.helpers import DATA_PATH, strip_df
+from OSN_common.helpers import strip_df
+from OSN_common.logger import logger
+from OSN_common.paths import DATA_PATH
 
 
+# TODO: move to constants
 _prevodove_subory = {
     "pzs_12": {
         "cesta": "03_Prevodníky/pzs_12_prevodnik.csv",
@@ -39,12 +42,15 @@ def load_programovy_profil(rok, verzia):
         sep=";",
     )
 
-def load_siet_nemocnic(rok):
-    return pd.read_excel(
-        DATA_PATH / "08_Nemocnice" / f"siet_nemocnic_{rok}.xlsx",
+def load_siet_nemocnic(xlsx_path: Path) -> DataFrame:
+    df = pd.read_excel(
+        xlsx_path,
         index_col=[0, 1, 2, 3],
         header=[0, 1, 2],
     )
+
+    logger.info(f'Loaded (siet): {len(df)}')
+    return df
 
 def load_signifikantne_operacne_vykony(rok):
     return pd.read_csv(
@@ -64,7 +70,7 @@ def load_zoznam_diagnoz(csv_path: Path) -> DataFrame:
     cols_str = ['kod_diagnozy', 'nazov_diagnozy', 'kod_skupiny_diagnoz', 'uplny_kod_diagnozy', 'poznamka']
     df[cols_str] = df[cols_str].apply(lambda x: x.str.strip())
 
-    print('Loaded (diagnozy):', len(df))
+    logger.info(f'Loaded (diagnozy): {len(df)}')
     return df
 
 
@@ -77,7 +83,7 @@ def load_zoznam_drg_skupin(csv_path: Path) -> DataFrame:
     )
     df = strip_df(df)
 
-    print('Loaded (DRG skupiny):', len(df))
+    logger.info(f'Loaded (DRG skupiny): {len(df)}')
     return df
 
 def load_zoznam_ms(csv_path: Path) -> DataFrame:
@@ -98,18 +104,21 @@ def load_zoznam_ms(csv_path: Path) -> DataFrame:
     cols_txt = ['kod_ms', 'nazov_ms', 'sposob_urcenia']
     df[cols_txt] = df[cols_txt].apply(lambda x: x.str.strip())
 
-    print('Loaded (MS):', len(df))
+    logger.info(f'Loaded (MS): {len(df)}')
     return df
 
-def load_zoznam_nemocnic():
-    return pd.read_csv(
-        DATA_PATH / "08_Nemocnice" / f"zoznam_nemocnic.csv",
+def load_zoznam_nemocnic(csv_path: Path) -> DataFrame:
+    df = pd.read_csv(
+        csv_path,
         sep=";",
         dtype=defaultdict(lambda: "str", uroven_nemocnice="Int8"),
     )
 
+    logger.info(f'Loaded (nemocnice): {len(df)}')
+    return df
+
 def load_zoznam_obci():
-    return pd.read_excel(
+    df = pd.read_excel(
         DATA_PATH / "03_Prevodníky" / "KÓDY_OBCE.xlsx",
         dtype=defaultdict(
             lambda: "str",
@@ -117,8 +126,11 @@ def load_zoznam_obci():
         ),
     )
 
+    logger.info(f'Loaded (obce): {len(df)}')
+    return df
+
 def load_zoznam_poistencov(rok):
-    return pd.read_csv(
+    df =  pd.read_csv(
         DATA_PATH / "05_Poistenci" / f"poistenci_vyfiltrovani_{rok}.csv",
         sep=";",
         dtype=defaultdict(
@@ -128,6 +140,9 @@ def load_zoznam_poistencov(rok):
         parse_dates=["datum_narodenia"],
         date_format="ISO8601",
     )
+
+    logger.info(f'Loaded (poistenci): {len(df)}')
+    return df
 
 
 def load_zoznam_vykonov(csv_path: Path) -> DataFrame:
@@ -152,13 +167,13 @@ def load_zoznam_vykonov(csv_path: Path) -> DataFrame:
     # keep "terminal" in case duplicates are found
     df = df[(~df['kod_vykonu'].duplicated(keep=False)) | (df['typ_vykonu']=='T')]
 
-    print('Loaded (vykony):', len(df))
+    logger.info(f'Loaded (vykony): {len(df)}')
     return df
 
 
-def load_vsetku_starostlivost(rok):
-    return pd.read_csv(
-        DATA_PATH / "01_Všetka starostlivosť" / f"osn_vsetka_starostlivost_{rok}.csv",
+def load_vsetka_starostlivost(csv_path: Path) -> DataFrame:
+    df = pd.read_csv(
+        csv_path,
         sep=";",
         dtype=defaultdict(
             lambda: "str",
@@ -173,6 +188,9 @@ def load_vsetku_starostlivost(rok):
         parse_dates=["datum_od", "datum_do", "datum_narodenia"],
         date_format="ISO8601",
     )
+
+    logger.info(f'Loaded (vs): {len(df)}')
+    return df
 
 
 def load_vystup_algoritmu(rok, verzia, prepinace_algoritmu=""):
@@ -186,25 +204,4 @@ def load_vystup_algoritmu(rok, verzia, prepinace_algoritmu=""):
         names=["id_hp", "ms"],
         dtype="str",
         header=0,
-    )
-
-
-def load_vsetku_starostlivost_s_ms(rok, verzia):
-    return pd.read_csv(
-        DATA_PATH
-        / "01_Všetka starostlivosť"
-        / f"osn_vsetka_starostlivost_{rok}_ms_{verzia}.csv",
-        sep=";",
-        dtype=defaultdict(
-            lambda: "str",
-            kod_zp="Int8",
-            vek_dni="Int16",
-            vek_roky="Int16",
-            hmotnost="Int16",
-            upv="Int16",
-            erv="float",
-            osetrovacia_doba="Int16",
-        ),
-        parse_dates=["datum_od", "datum_do", "datum_narodenia"],
-        date_format="ISO8601",
     )
