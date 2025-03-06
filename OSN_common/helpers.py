@@ -3,7 +3,8 @@ import pandas as pd
 from pandas import DataFrame, Series
 from pathlib import Path
 import re
-from typing import Any
+from typing import Any, Iterable
+from unicodedata import normalize
 
 from OSN_common.logger import logger
 
@@ -16,18 +17,28 @@ def categorize_age(age: Any) -> str:
         return pd.NA
     
     if age >= 19:
-        return "dospeli"
+        return 'dospeli'
     elif age >= 16:
-        return "deti_16"
+        return 'deti_16'
     elif age >= 7:
-        return "deti_7"
+        return 'deti_7'
     elif age >= 1:
-        return "deti_1"
+        return 'deti_1'
     elif age >= 0:
-        return "deti_0"
+        return 'deti_0'
     else:
-        logger.warning(f"Unrecognized age value: {age}")
+        logger.warning(f'Unrecognized age value: {age}')
         return ''
+    
+def check_path_existence(paths: Iterable[Path]) -> None:
+    """
+    Bulk existence test of path collection
+    """
+    for p in paths:
+        if not p.exists():
+            logger.warning(f'Path does not exist! {p}')
+            return
+    logger.info('✅ All paths exist')
 
 def drop_duplicates(df: DataFrame, keep='last') -> DataFrame:
     """
@@ -35,9 +46,10 @@ def drop_duplicates(df: DataFrame, keep='last') -> DataFrame:
     Warning: Fails if df contains lists or other unhashable types
     """
     if (n_dups := df.duplicated().sum()) > 0:
-        print(f"Dropping {n_dups} duplicated rows")
+        logger.debug(f'Dropping {n_dups} duplicated rows')
         return df.drop_duplicates(keep=keep)
-    print("No duplicates found")
+    
+    logger.debug('✅ No duplicates found!')
     return df
 
 def fillna_empty_list(s: Series):
@@ -47,7 +59,7 @@ def fillna_empty_list(s: Series):
     return s.fillna('').apply(list)
 
 def load_json(file: str | Path) -> list | dict:
-    with open(file, "r") as f:
+    with open(file, 'r') as f:
         return json.load(f)
 
 def move_column(df: DataFrame, colname: str, new_idx: int) -> DataFrame:
@@ -58,15 +70,17 @@ def move_column(df: DataFrame, colname: str, new_idx: int) -> DataFrame:
     df.insert(new_idx, colname, col)
     return df
 
-def rimska_cislica(cislo):
-    rimske_cislice = {1: "I", 2: "II", 3: "III", 4: "IV", 5: "V"}
-    return rimske_cislice[cislo]
+def norm_path(p: Path) -> Path:
+    """
+    Normalize path so that e.g. accentation is consistent between multiple OS (e.g. 'š' between MacOS and Windows)
+    """
+    return Path(normalize('NFC', str(p)))
 
 def standardize_text(text: str) -> str:
     """
     Standardize text by removing non-alphanumeric characters and converting to lowercase
     """
-    return re.sub("[^0-9a-zA-Z]", "", text).lower()
+    return re.sub('[^0-9a-zA-Z]', '', text).lower()
 
 def strip_df(df: DataFrame) -> DataFrame:
     """

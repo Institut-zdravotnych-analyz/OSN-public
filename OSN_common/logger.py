@@ -1,10 +1,3 @@
-"""
-Custom colorful logger:
-    - streaming output to stdout + logfile (compatible with jupyter notebooks)
-    - custom formatting [message, date]
-    - colorizing logs
-"""
-
 import colorlog
 import logging
 from pathlib import Path
@@ -15,14 +8,29 @@ from OSN_common.constants import LOG_COLOR_SCHEME, LOG_FMT_FILE, LOG_FMT_CONSOLE
 
 class ColorLogger:
     """
-    Logger printing colorful messages to console.
-    Optionally prints to file in alongside.
+    Custom colorful logger:
+        - streaming output to stdout + logfile (compatible with jupyter notebooks)
+        - custom formatting [message, date]
+        - colorizing logs
     """
 
-    def __init__(self, log_file: Path | str = None):
+    NAME_2_LEVEL = {
+        'debug': logging.DEBUG,
+        'info': logging.INFO,
+        'warning': logging.WARNING,
+        'error': logging.ERROR,
+        'critical': logging.CRITICAL
+    }
+
+    def __init__(self, log_file: Path | str = None, log_level: str = 'debug'):
+        """
+        Initialize logger with custom formatting and color scheme.
+        if `log_file` is not provided, logger streams only to console.
+        """
+
         self.log_file = log_file
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
+        self.logger.setLevel(self.NAME_2_LEVEL[log_level])
         self.logger.propagate = False
 
         # prevents logger to stack in Jupyter console when ran multiple times
@@ -33,7 +41,7 @@ class ColorLogger:
         # logging to console
         formatter = colorlog.ColoredFormatter(
             fmt=LOG_FMT_CONSOLE,
-            datefmt="%H:%M:%S",
+            datefmt='%H:%M:%S',
             reset=True,
             log_colors=LOG_COLOR_SCHEME
         )
@@ -45,7 +53,7 @@ class ColorLogger:
         if log_file:
             formatter = logging.Formatter(
                 fmt=LOG_FMT_FILE,
-                datefmt="%Y-%m-%d %H:%M:%S",
+                datefmt='%Y-%m-%d %H:%M:%S',
             )
             handler = logging.FileHandler(filename=log_file, mode="w")
             handler.setFormatter(formatter)
