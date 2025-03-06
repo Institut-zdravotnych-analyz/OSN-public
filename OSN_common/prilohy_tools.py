@@ -60,26 +60,6 @@ def load_priloha_2(xlsx_path: str) -> DataFrame:
     return df
 
 
-def sort_priloha_2(df: DataFrame) -> DataFrame:
-    SORT_ORDER = [
-        "cislo_programu",
-        "max_uroven",
-        "uroven_ms_deti_0",
-        "uroven_ms_deti_1",
-        "uroven_ms_deti_7",
-        "uroven_ms_deti_16",
-        "uroven_ms_dospeli",
-        "zdielana_ms",
-        "kod_ms",
-    ]
-    ASCENDING_ORDER = [True, False, False, False, False, False, False, True, False]
-
-    df["max_uroven"] = df[c.P2_UROVNE_COLS].max(axis=1)
-    df = df.sort_values(SORT_ORDER, ascending=ASCENDING_ORDER).reset_index(drop=True)
-    df = df.drop("max_uroven", axis=1)
-    return df
-
-
 def load_priloha_3(xlsx_path: str) -> DataFrame:
     raise NotImplementedError()
 
@@ -242,17 +222,43 @@ def save_priloha(df: DataFrame, csv_path: Path, **kwargs) -> None:
     )
     postprocess_priloha(df.copy(), **kwargs).to_csv(csv_path, index=False, sep=";")
 
+def sort_priloha_2(df: DataFrame) -> DataFrame:
+    """
+    Sorting logic for P2
+    """
+    SORT_ORDER = [
+        "cislo_programu",
+        "max_uroven",
+        "uroven_ms_deti_0",
+        "uroven_ms_deti_1",
+        "uroven_ms_deti_7",
+        "uroven_ms_deti_16",
+        "uroven_ms_dospeli",
+        "zdielana_ms",
+        "kod_ms",
+    ]
+    ASCENDING_ORDER = [True, False, False, False, False, False, False, True, False]
 
-def sort_priloha_by_program_ms(
-    df: DataFrame, ordered_programs: list, p2: DataFrame
+    df["max_uroven"] = df[c.P2_UROVNE_COLS].max(axis=1)
+    df = df.sort_values(SORT_ORDER, ascending=ASCENDING_ORDER).reset_index(drop=True)
+    df = df.drop("max_uroven", axis=1)
+    return df
+
+
+def sort_priloha_12_13(
+    df: DataFrame, ordered_programs: list[int], p2: DataFrame
 ) -> DataFrame:
-    p2 = p2[~p2.zdielana_ms & p2.cislo_programu.isin(ordered_programs)]
-    p2.loc[:, "max_uroven"] = p2[c.P2_UROVNE_COLS].max(axis=1)
-    p2.loc[:, "ms_order"] = p2.index
-    df = df.merge(
-        p2[["kod_ms", "cislo_programu", "max_uroven", "ms_order"]],
-        on="kod_ms",
-    )
+    """
+    Sorting logic for P12 & P13
+    """
+    
+    # preprocess p2
+    p2 = p2[~p2.zdielana_ms & p2.cislo_programu.isin(ordered_programs)][["kod_ms", "cislo_programu"]]
+    p2['max_uroven'] = p2[c.P2_UROVNE_COLS].max(axis=1)
+    p2 = p2.reset_index(names='ms_order')
+
+    # merge to p12 / p13
+    df = df.merge(p2, on="kod_ms")
     df["cislo_programu"] = pd.Categorical(
         df["cislo_programu"], categories=ordered_programs, ordered=True
     )
