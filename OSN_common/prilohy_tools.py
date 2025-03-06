@@ -7,23 +7,19 @@ import OSN_common.constants as c
 from OSN_common.helpers import standardize_text, strip_df
 from OSN_common.logger import logger
 
-P_META = c.PrilohyXlsxMeta()
+PRILOHY = c.PrilohyXlsxMeta()
 P_FMT = c.PrilohyXlsxFormats()
 
 
 def load_priloha_1(xlsx_path: str) -> DataFrame:
-    df = pd.read_excel(
-        xlsx_path, skiprows=6, skipfooter=6, usecols="A:J", names=c.P1_XLSX["columns"]
-    )
+    df = pd.read_excel(xlsx_path, skiprows=6, skipfooter=6, usecols="A:J", names=PRILOHY.P1["columns"])
 
     for col in c.P1_DATE_COLS:
         df[col] = pd.to_datetime(df[col], format="%d.%m.%Y")
 
     # convert 'program II. úrovne' -> 2
     df["uroven_programu"] = (
-        df["uroven_programu"]
-        .apply(lambda x: x.split(" ")[1][:-1])
-        .map(c.ROMAN_2_INT, na_action="ignore")
+        df["uroven_programu"].apply(lambda x: x.split(" ")[1][:-1]).map(c.ROMAN_2_INT, na_action="ignore")
     )
     df = strip_df(df)
 
@@ -32,9 +28,7 @@ def load_priloha_1(xlsx_path: str) -> DataFrame:
 
 
 def load_priloha_2(xlsx_path: str) -> DataFrame:
-    df = pd.read_excel(
-        xlsx_path, skiprows=8, skipfooter=102, names=P_META.P2["columns"]
-    )
+    df = pd.read_excel(xlsx_path, skiprows=8, skipfooter=102, names=PRILOHY.P2["columns"])
 
     # dropping 78x 'Číslo programu', 78x NaN
     df["is_numeric"] = df.cislo_programu.astype(str).str.isnumeric()
@@ -77,9 +71,7 @@ def load_priloha_6(xlsx_path: str) -> DataFrame:
 
 
 def load_priloha_7(xlsx_path: str) -> DataFrame:
-    df = pd.read_excel(
-        xlsx_path, skiprows=7, skipfooter=10, names=P_META.P7["columns"], dtype=str
-    )
+    df = pd.read_excel(xlsx_path, skiprows=7, skipfooter=10, names=PRILOHY.P7["columns"], dtype=str)
 
     logger.info(f"Loaded rows of Príloha 7: {len(df)}")
     return strip_df(df)
@@ -94,7 +86,7 @@ def load_priloha_9(xlsx_path: str) -> DataFrame:
         xlsx_path,
         skiprows=9,
         skipfooter=14,
-        names=P_META.P9["columns"],
+        names=PRILOHY.P9["columns"],
         dtype=str,
     )
 
@@ -107,7 +99,7 @@ def load_priloha_10(xlsx_path: str) -> DataFrame:
         xlsx_path,
         skiprows=7,
         skipfooter=7,
-        names=P_META.P10["columns"],
+        names=PRILOHY.P10["columns"],
         dtype=str,
     )
     df = strip_df(df)
@@ -126,7 +118,7 @@ def load_priloha_12(xlsx_path: str) -> DataFrame:
         xlsx_path,
         skiprows=7,
         skipfooter=26,
-        names=P_META.P12["columns"],
+        names=PRILOHY.P12["columns"],
         dtype=str,
     )
     df = strip_df(df)
@@ -141,7 +133,7 @@ def load_priloha_13(xlsx_path: str) -> DataFrame:
         xlsx_path,
         skiprows=7,
         skipfooter=23,
-        names=P_META.P13["columns"],
+        names=PRILOHY.P13["columns"],
         dtype=str,
     )
     df = strip_df(df)
@@ -156,7 +148,7 @@ def load_priloha_14(xlsx_path: str) -> DataFrame:
         xlsx_path,
         skiprows=7,
         skipfooter=9,
-        names=P_META.P4["columns"],
+        names=PRILOHY.P14["columns"],
         dtype=str,
     )
     df = strip_df(df)
@@ -172,7 +164,7 @@ def load_priloha_15(xlsx_path: str) -> DataFrame:
         xlsx_path,
         skiprows=7,
         skipfooter=3,
-        names=P_META.P15["columns"],
+        names=PRILOHY.P15["columns"],
         dtype=str,
     )
     df = strip_df(df)
@@ -217,10 +209,9 @@ def postprocess_priloha(df: DataFrame, sortby: str = None) -> DataFrame:
 
 
 def save_priloha(df: DataFrame, csv_path: Path, **kwargs) -> None:
-    logger.info(
-        f"Saving {len(df)} rows as a CSV table: {csv_path.relative_to(csv_path.parent.parent)}"
-    )
+    logger.info(f"Saving {len(df)} rows as a CSV table: {csv_path.relative_to(csv_path.parent.parent)}")
     postprocess_priloha(df.copy(), **kwargs).to_csv(csv_path, index=False, sep=";")
+
 
 def sort_priloha_2(df: DataFrame) -> DataFrame:
     """
@@ -245,23 +236,22 @@ def sort_priloha_2(df: DataFrame) -> DataFrame:
     return df
 
 
-def sort_priloha_12_13(
-    df: DataFrame, ordered_programs: list[int], p2: DataFrame
-) -> DataFrame:
+def sort_priloha_12_13(df: DataFrame, ordered_programs: list[int], p2: DataFrame) -> DataFrame:
     """
     Sorting logic for P12 & P13
     """
-    
+
     # preprocess p2
-    p2 = p2[~p2.zdielana_ms & p2.cislo_programu.isin(ordered_programs)][["kod_ms", "cislo_programu"]]
-    p2['max_uroven'] = p2[c.P2_UROVNE_COLS].max(axis=1)
-    p2 = p2.reset_index(names='ms_order')
+    cols = ["kod_ms", "cislo_programu"] + c.P2_UROVNE_COLS
+
+    p2 = p2[~p2.zdielana_ms & p2.cislo_programu.isin(ordered_programs)][cols]
+    p2["max_uroven"] = p2[c.P2_UROVNE_COLS].max(axis=1)
+    p2 = p2.reset_index(names="ms_order")
+    p2 = p2.drop(columns=c.P2_UROVNE_COLS)
 
     # merge to p12 / p13
     df = df.merge(p2, on="kod_ms")
-    df["cislo_programu"] = pd.Categorical(
-        df["cislo_programu"], categories=ordered_programs, ordered=True
-    )
+    df["cislo_programu"] = pd.Categorical(df["cislo_programu"], categories=ordered_programs, ordered=True)
     df = df.sort_values(
         ["max_uroven", "cislo_programu", "ms_order", df.columns[0]],
         ascending=[False, True, True, True],
@@ -272,8 +262,8 @@ def sort_priloha_12_13(
 
 def set_formats(wb: Workbook) -> dict:
     return {
-        "bigger_bold": wb.add_format(**P_FMT.BIGGER_BOLD_FONT),
-        "bold": wb.add_format(**P_FMT.BOLD_FONT),
+        "bigger_bold": wb.add_format(P_FMT.BIGGER_BOLD_FONT),
+        "bold": wb.add_format(P_FMT.BOLD_FONT),
         "data_header": wb.add_format(
             {
                 **P_FMT.BOLD_FONT,
@@ -301,9 +291,7 @@ def set_formats(wb: Workbook) -> dict:
                 **P_FMT.CENTER_ALIGN,
             }
         ),
-        "data_row": wb.add_format(
-            {**P_FMT.TEXT_WRAP, **P_FMT.DEFAULT_FONT, **P_FMT.THIN_BOTTOM_BORDER}
-        ),
+        "data_row": wb.add_format({**P_FMT.TEXT_WRAP, **P_FMT.DEFAULT_FONT, **P_FMT.THIN_BOTTOM_BORDER}),
         "data_row_bold": wb.add_format(
             {
                 **P_FMT.BOLD_FONT,

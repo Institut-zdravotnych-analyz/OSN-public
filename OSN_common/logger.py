@@ -15,14 +15,14 @@ class ColorLogger:
     """
 
     NAME_2_LEVEL = {
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warning': logging.WARNING,
-        'error': logging.ERROR,
-        'critical': logging.CRITICAL
+        "debug": logging.DEBUG,
+        "info": logging.INFO,
+        "warning": logging.WARNING,
+        "error": logging.ERROR,
+        "critical": logging.CRITICAL,
     }
 
-    def __init__(self, log_file: Path | str = None, log_level: str = 'debug'):
+    def __init__(self, log_file: Path | str = None, log_level: str = "debug"):
         """
         Initialize logger with custom formatting and color scheme.
         if `log_file` is not provided, logger streams only to console.
@@ -40,10 +40,7 @@ class ColorLogger:
 
         # logging to console
         formatter = colorlog.ColoredFormatter(
-            fmt=LOG_FMT_CONSOLE,
-            datefmt='%H:%M:%S',
-            reset=True,
-            log_colors=LOG_COLOR_SCHEME
+            fmt=LOG_FMT_CONSOLE, datefmt="%H:%M:%S", reset=True, log_colors=LOG_COLOR_SCHEME
         )
         handler = logging.StreamHandler(stream=sys.stdout)
         handler.setFormatter(formatter)
@@ -53,26 +50,27 @@ class ColorLogger:
         if log_file:
             formatter = logging.Formatter(
                 fmt=LOG_FMT_FILE,
-                datefmt='%Y-%m-%d %H:%M:%S',
+                datefmt="%Y-%m-%d %H:%M:%S",
             )
             handler = logging.FileHandler(filename=log_file, mode="w")
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
-            print(f'Initialised logfile at: {log_file}')
+            print(f"Initialised logfile at: {log_file}")
 
     def debug(self, msg: str):
         self.logger.debug(msg)
 
     def info(self, msg: str):
         self.logger.info(msg)
-    
+
     def warning(self, msg: str):
         self.logger.warning(msg)
-    
+
     def error(self, msg: str):
         self.logger.error(msg)
-    
+
     def critical(self, msg: str):
         self.logger.critical(msg)
+
 
 logger = ColorLogger()
