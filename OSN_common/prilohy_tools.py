@@ -28,7 +28,7 @@ def load_priloha_1(xlsx_path: str) -> DataFrame:
 
 
 def load_priloha_2(xlsx_path: str) -> DataFrame:
-    df = pd.read_excel(xlsx_path, skiprows=8, skipfooter=102, names=PRILOHY.P2["columns"])
+    df = pd.read_excel(xlsx_path, skiprows=8, skipfooter=101, names=PRILOHY.P2["columns"])
 
     # dropping 78x 'Číslo programu', 78x NaN
     df["is_numeric"] = df.cislo_programu.astype(str).str.isnumeric()
@@ -132,7 +132,7 @@ def load_priloha_13(xlsx_path: str) -> DataFrame:
     df = pd.read_excel(
         xlsx_path,
         skiprows=7,
-        skipfooter=23,
+        skipfooter=26,
         names=PRILOHY.P13["columns"],
         dtype=str,
     )
@@ -163,7 +163,7 @@ def load_priloha_15(xlsx_path: str) -> DataFrame:
     df = pd.read_excel(
         xlsx_path,
         skiprows=7,
-        skipfooter=3,
+        skipfooter=9,
         names=PRILOHY.P15["columns"],
         dtype=str,
     )
