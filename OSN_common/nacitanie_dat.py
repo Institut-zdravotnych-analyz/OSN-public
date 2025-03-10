@@ -32,7 +32,10 @@ def nacitaj_prevodovy_subor(nazov):
 
 def nacitaj_zoznam_obci():
     return pd.read_excel(
-        _data_path / "03_Prevodníky" / "KÓDY_OBCE.xlsx",
+        _data_path
+        / "11_Dátové súbory a prevodníky"
+        / "03_Prevodníky"
+        / "KÓDY_OBCE.xlsx",
         dtype=defaultdict(
             lambda: "str",
             {"Počet obyvateľov 2021": "Int64"},
@@ -42,7 +45,10 @@ def nacitaj_zoznam_obci():
 
 def nacitaj_zoznam_poistencov(rok):
     return pd.read_csv(
-        _data_path / "05_Poistenci" / f"poistenci_vyfiltrovani_{rok}.csv",
+        _data_path
+        / "11_Dátové súbory a prevodníky"
+        / "05_Poistenci"
+        / f"poistenci_vyfiltrovani_{rok}.csv",
         sep=";",
         dtype=defaultdict(
             lambda: "str",
@@ -55,7 +61,10 @@ def nacitaj_zoznam_poistencov(rok):
 
 def nacitaj_siet_nemocnic(rok):
     return pd.read_excel(
-        _data_path / "08_Nemocnice" / f"siet_nemocnic_{rok}.xlsx",
+        _data_path
+        / "11_Dátové súbory a prevodníky"
+        / "08_Nemocnice"
+        / f"siet_nemocnic_{rok}.xlsx",
         index_col=[0, 1, 2, 3],
         header=[0, 1, 2],
     )
@@ -80,7 +89,10 @@ def nacitaj_zoznam_diagnoz(rok):
 
 def nacitaj_zoznam_nemocnic():
     return pd.read_csv(
-        _data_path / "08_Nemocnice" / f"zoznam_nemocnic.csv",
+        _data_path
+        / "11_Dátové súbory a prevodníky"
+        / "08_Nemocnice"
+        / f"zoznam_nemocnic.csv",
         sep=";",
         dtype=defaultdict(lambda: "str", uroven_nemocnice="Int8"),
     )
