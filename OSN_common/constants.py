@@ -187,7 +187,6 @@ class PrilohyXlsxMeta:
         "footer": {
             "V": "Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.13 alebo č. 14, medicínska služba sa určí podľa prílohy č. 13 alebo č. 14."
         },
-        "order": 12,
         "programs_ordered": [
             48,
             49,
