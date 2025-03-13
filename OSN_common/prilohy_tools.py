@@ -210,7 +210,7 @@ def postprocess_priloha(df: DataFrame, sortby: str = None) -> DataFrame:
 
 def save_priloha(df: DataFrame, csv_path: Path, **kwargs) -> None:
     logger.info(f"Saving {len(df)} rows as a CSV table: {csv_path.relative_to(csv_path.parent.parent)}")
-    postprocess_priloha(df.copy(), **kwargs).to_csv(csv_path, index=False, sep=";")
+    postprocess_priloha(strip_df(df.copy()), **kwargs).to_csv(csv_path, index=False, sep=";")
 
 
 def sort_priloha_2(df: DataFrame) -> DataFrame:
