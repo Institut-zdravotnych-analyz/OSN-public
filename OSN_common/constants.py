@@ -105,7 +105,7 @@ class PrilohyXlsxMeta:
             "S": 15,  # diff
         },
         "description": "",
-        "diff_translations": {"added": "Nová MS", "removed": "Odstránená MS", "edited": "Upravená MS", "same": ""},
+        "diff_translations": {"added": "Pridaná MS", "removed": "Odstránená MS", "edited": "Upravená MS", "same": ""},
         "file": "02_Zoznam-medicinskych-sluzieb.xlsx",
         "order": 2,
         "title": "Zoznam medicínskych služieb so zaradením do programov a podmienky pre poskytnutie medicínskych služieb v nemocnici",
