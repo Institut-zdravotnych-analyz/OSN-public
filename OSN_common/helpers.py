@@ -95,5 +95,5 @@ def strip_df(df: DataFrame) -> DataFrame:
     Remove empty characters and keep null values
     """
     cols_txt = df.select_dtypes("object").columns
-    df[cols_txt] = df[cols_txt].apply(lambda x: x.str.strip())
+    df[cols_txt] = df[cols_txt].fillna("").apply(lambda x: x.str.strip()).replace("", pd.NA)
     return df

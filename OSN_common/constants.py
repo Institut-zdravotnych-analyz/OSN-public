@@ -105,7 +105,7 @@ class PrilohyXlsxMeta:
             "S": 15,  # diff
         },
         "description": "",
-        "diff_translations": {"added": "Nová MS", "removed": "Odstránená MS", "edited": "Upravená MS", "same": ""},
+        "diff_translations": {"added": "Pridaná MS", "removed": "Odstránená MS", "edited": "Upravená MS", "same": ""},
         "file": "02_Zoznam-medicinskych-sluzieb.xlsx",
         "order": 2,
         "title": "Zoznam medicínskych služieb so zaradením do programov a podmienky pre poskytnutie medicínskych služieb v nemocnici",
@@ -187,16 +187,15 @@ class PrilohyXlsxMeta:
         "footer": {
             "V": "Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.13 alebo č. 14, medicínska služba sa určí podľa prílohy č. 13 alebo č. 14."
         },
-        "order": 12,
         "programs_ordered": [
             48,
             49,
             58,
-            52,
             3,
             18,
             50,
             51,
+            52,
             55,
             22,
             23,
@@ -239,11 +238,11 @@ class PrilohyXlsxMeta:
         "order": 13,
         "programs_ordered": [
             17,
-            2,
             3,
             18,
             7,
             1,
+            2,
             12,
             44,
             8,
