@@ -1,10 +1,10 @@
 """
-Podmienky pre tvorbu siete sú: 
-- geografická dostupnosť ústavnej starostlivosti, 
-- počet poistencov v spádovom území nemocnice, 
-- minimálny počet lôžok. 
+Podmienky pre tvorbu siete sú:
+- geografická dostupnosť ústavnej starostlivosti,
+- počet poistencov v spádovom území nemocnice,
+- minimálny počet lôžok.
 
-Pre vyhodnotenie podmienok geografickej dostupnosti a počtu poistencov v spádovom území sa prihliada iba na všeobecné nemocnice úrovne II. a vyššej úrovne. Partnerské nemocnice, špecializované nemocnice a nemocnice I. úrovne sa nezohľadňujú, pričom sa prihliada len na poistencov s pobytom na území Slovenskej republiky. 
+Pre vyhodnotenie podmienok geografickej dostupnosti a počtu poistencov v spádovom území sa prihliada iba na všeobecné nemocnice úrovne II. a vyššej úrovne. Partnerské nemocnice, špecializované nemocnice a nemocnice I. úrovne sa nezohľadňujú, pričom sa prihliada len na poistencov s pobytom na území Slovenskej republiky.
 """
 
 import numpy as np
@@ -28,7 +28,9 @@ def _nacitaj_dojazdovu_maticu():
     Oblasť Bratislavy sa pre potreby výpočtu dojazdu považuje za 1 sídlo. Rovnako to platí aj pre Košice.
     """
 
-    dojazdova_matica = pd.read_csv("dojazdova_matica/dojazdova_matica.csv", index_col=0)
+    dojazdova_matica = pd.read_csv(
+        "vyhodnotenie_siete/dojazdova_matica/dojazdova_matica.csv", index_col=0
+    )
     dojazdova_matica.index = dojazdova_matica.index.astype("str")
     return dojazdova_matica
 
@@ -350,14 +352,16 @@ def vyhodnot_spady(siet_nemocnic, urovne_siete, poistenci_na_ZUJ, poistenci_na_o
 # Zabezpečenie minimálneho počtu lôžok
 
 MIN_POCTY_LOZOK_TYP = pd.read_excel(
-    "lozka/minimálny počet lôžok.xlsx", sheet_name="Typ"
+    "vyhodnotenie_siete/lozka/minimálny počet lôžok.xlsx", sheet_name="Typ"
 )
 # minimalne_pocty_lozok_oddelenie = pd.read_excel('minimálny počet lôžok.xlsx', sheet_name='Oddelenie', index_col=1)
 
 
 def vyhodnot_lozka(rok):
     pocty_lozok = pd.read_excel(
-        f"lozka/pocty_lozok_{rok}.xlsx", usecols="V,Y,Z,AK", dtype={"CISR_ODB": "str"}
+        f"vyhodnotenie_siete/lozka/pocty_lozok_{rok}.xlsx",
+        usecols="V,Y,Z,AK",
+        dtype={"CISR_ODB": "str"},
     )
     pocty_lozok["pzs_6"] = pocty_lozok["IDENTIFZAR"].str[:6]
     pocty_lozok = pocty_lozok.merge(NEMOCNICE[["pzs_6", "kraj"]], how="left")
