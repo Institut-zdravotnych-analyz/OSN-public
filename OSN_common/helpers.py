@@ -92,8 +92,9 @@ def standardize_text(text: str) -> str:
 
 def strip_df(df: DataFrame) -> DataFrame:
     """
-    Remove empty characters and keep null values
+    Remove empty / white characters and keep null values
     """
     cols_txt = df.select_dtypes("object").columns
-    df[cols_txt] = df[cols_txt].fillna("").apply(lambda x: x.str.strip()).replace("", pd.NA)
+    for col in cols_txt:
+        df[col] = df[col].fillna("").astype(str).str.strip().replace("", pd.NA)
     return df
