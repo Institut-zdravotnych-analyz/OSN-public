@@ -18,7 +18,9 @@ LOG_FMT_CONSOLE = "%(log_color)s%(asctime)s %(levelname)8s -- %(reset)s%(white)s
 INT_2_ROMAN = {1: "I", 2: "II", 3: "III", 4: "IV", 5: "V"}
 ROMAN_2_INT = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
 
-### PRILOHY - USEFUL COLS
+### PRILOHY - USEFUL DATA
+
+FALLBACK_MS = "S99-99"
 
 P1_MAIN_COLS = ["cislo_programu", "nazov_programu", "uroven_programu"]
 
@@ -46,8 +48,25 @@ P2_POVINNOSTI_MS_COLS = [
 
 P2_NUM_COLS = ["casova_dostupnost", "minimum_na_nemocnicu", "minimum_na_lekara"]
 
+SPOSOBY_URCENIA_VALUES = ["D", "DD", "DRGD", "M", "MD", "MV", "NOV", "S", "V", "VD", "VV"]
 
-# PRILOHY XLSX
+# sposob urcenia mapped to Priloha where it could be found
+SPOSOB_2_PRILOHA = {
+    "D": ["p14", "p15"],
+    "DD": ["p10"],
+    "DRGD": ["p6"],
+    "M": ["p17"],
+    "MD": ["p9a"],
+    "MV": ["p7a", "p8a"],
+    "NOV": ["p5"],
+    "S": ["p16"],
+    "V": ["p12", "p13"],
+    "VD": ["p9"],
+    "VV": ["p7", "p8"],
+}
+
+
+### PRILOHY XLSX
 class PrilohyXlsxMeta:
     P1 = {
         "columns": P1_MAIN_COLS + P1_POVINNOSTI_P_COLS + P1_DATE_COLS,
@@ -102,10 +121,16 @@ class PrilohyXlsxMeta:
             "P": 4.71,
             "Q": 10.5,
             "R": 10.5,
-            "S": 15,  # diff
+            "S": 25,  # diff
         },
         "description": "",
-        "diff_translations": {"added": "Pridaná MS", "removed": "Odstránená MS", "edited": "Upravená MS", "same": ""},
+        "diff_translations": {
+            "added": "Pridaná MS",
+            "removed": "Odstránená MS",
+            "edited": "Nová verzia MS",
+            "original": "Pôvodná verzia MS",
+            "same": "",
+        },
         "file": "02_Zoznam-medicinskych-sluzieb.xlsx",
         "order": 2,
         "title": "Zoznam medicínskych služieb so zaradením do programov a podmienky pre poskytnutie medicínskych služieb v nemocnici",
@@ -178,9 +203,10 @@ class PrilohyXlsxMeta:
         "column_widths": {"A": 14.71, "B": 49.71, "C": 19.71, "D": 50.14, "E": 30},
         "description": "Ak bol poistencovi vo veku 18 rokov a menej poskytnutý hlavný zdravotný výkon podľa stĺpca 'zdravotný výkon', hospitalizácii sa určí medicínska služba podľa stĺpca 'medicínska služba' (V).",
         "diff_translations": {
-            "added": "Nové zaradenie výkonu",
+            "added": "Nový výkon",
             "removed": "Odstránené zaradenie výkonu",
-            "edited": "Upravené zaradenie výkonu",
+            "edited": "Nové zaradenie výkonu",
+            "original": "Pôvodné zaradenie výkonu",
             "same": "",
         },
         "file": "12_Sposob urcenia medicinskej sluzby podla hlavneho vykonu pre deti_V.xlsx",
@@ -302,7 +328,8 @@ class PrilohyXlsxMeta:
         "diff_translations": {
             "added": "Nová diagnóza",
             "removed": "Odstránenie diagnózy",
-            "edited": "Preradenie diagnózy",
+            "edited": "Nové zaradenie diagnózy",
+            "original": "Pôvodné zaradenie diagnózy",
             "same": "",
         },
         "file": "14_Sposob urcenia medicinskej sluzby podla hlavnej diagnozy pre deti_D.xlsx",
