@@ -23,7 +23,7 @@ def load_priloha_1(xlsx_path: str) -> DataFrame:
     )
     df = strip_df(df)
 
-    logger.info(f"Loaded rows of XLSX Príloha 1: {len(df)}")
+    logger.debug(f"Loaded rows of XLSX Príloha 1: {len(df)}")
     return df
 
 
@@ -50,7 +50,7 @@ def load_priloha_2(xlsx_path: str) -> DataFrame:
     for col in ["kod_ms", "nazov_ms", "sposob_urcenia"]:
         df[col] = df[col].str.strip()
 
-    logger.info(f"Loaded rows of XLSX Príloha 2: {len(df)}")
+    logger.debug(f"Loaded rows of XLSX Príloha 2: {len(df)}")
     return df
 
 
@@ -73,7 +73,7 @@ def load_priloha_6(xlsx_path: str) -> DataFrame:
 def load_priloha_7(xlsx_path: str) -> DataFrame:
     df = pd.read_excel(xlsx_path, skiprows=7, skipfooter=10, names=PRILOHY.P7["columns"], dtype=str)
 
-    logger.info(f"Loaded rows of Príloha 7: {len(df)}")
+    logger.debug(f"Loaded rows of Príloha 7: {len(df)}")
     return strip_df(df)
 
 
@@ -90,7 +90,7 @@ def load_priloha_9(xlsx_path: str) -> DataFrame:
         dtype=str,
     )
 
-    logger.info(f"Loaded rows of Príloha 9: {len(df)}")
+    logger.debug(f"Loaded rows of Príloha 9: {len(df)}")
     return strip_df(df)
 
 
@@ -105,7 +105,7 @@ def load_priloha_10(xlsx_path: str) -> DataFrame:
     df = strip_df(df)
     df.kod_hlavnej_diagnozy = df.kod_hlavnej_diagnozy.fillna("").apply(standardize_text)
 
-    logger.info(f"Loaded rows of XLSX Príloha 10: {len(df)}")
+    logger.debug(f"Loaded rows of XLSX Príloha 10: {len(df)}")
     return df
 
 
@@ -124,7 +124,7 @@ def load_priloha_12(xlsx_path: str) -> DataFrame:
     df = strip_df(df)
     df = df.dropna(how="all")
 
-    logger.info(f"Loaded rows of XLSX Príloha 12: {len(df)}")
+    logger.debug(f"Loaded rows of XLSX Príloha 12: {len(df)}")
     return df
 
 
@@ -139,7 +139,7 @@ def load_priloha_13(xlsx_path: str) -> DataFrame:
     df = strip_df(df)
     df = df.dropna(how="all")
 
-    logger.info(f"Loaded rows of XLSX Príloha 13: {len(df)}")
+    logger.debug(f"Loaded rows of XLSX Príloha 13: {len(df)}")
     return df
 
 
@@ -155,7 +155,7 @@ def load_priloha_14(xlsx_path: str) -> DataFrame:
     df = df.dropna(how="all")
     df.kod_diagnozy = df.kod_diagnozy.fillna("").apply(standardize_text)
 
-    logger.info(f"Loaded rows of XLSX Príloha 14: {len(df)}")
+    logger.debug(f"Loaded rows of XLSX Príloha 14: {len(df)}")
     return df
 
 
@@ -171,46 +171,13 @@ def load_priloha_15(xlsx_path: str) -> DataFrame:
     df = df.dropna(how="all")
     df.kod_diagnozy = df.kod_diagnozy.fillna("").apply(standardize_text)
 
-    logger.info(f"Loaded rows of XLSX Príloha 15: {len(df)}")
-    return df
-
-
-def postprocess_priloha(df: DataFrame, sortby: str = None) -> DataFrame:
-    """
-    Postprocess dataframe before dumping
-    """
-    # cislo programu -> int
-    if "cislo_programu" in df.columns:
-        df.cislo_programu = df.cislo_programu.astype(int)
-
-    # MS names -> stripprf str, not finishing with '.' or ','
-    if "nazov_ms" in df.columns:
-        df["nazov_ms"] = (
-            df["nazov_ms"]
-            .fillna("")
-            .str.strip()
-            .apply(lambda x: x.replace("I.", "I") if x.endswith("I.") else x)
-            .apply(lambda x: x[:-1] if x.endswith(",") else x)
-        )
-
-    # text columns - stripped
-    for col in df.columns:
-        if "nazov" in col or "kod" in col or "navrh" in col:
-            df[col] = df[col].str.strip()
-
-    # clean from duplicated
-    df = df.drop_duplicates().reset_index(drop=True)
-
-    # sort
-    if sortby and sortby in df.columns:
-        df = df.sort_values(sortby).reset_index(drop=True)
-
+    logger.debug(f"Loaded rows of XLSX Príloha 15: {len(df)}")
     return df
 
 
 def save_priloha(df: DataFrame, csv_path: Path, **kwargs) -> None:
-    logger.info(f"Saving {len(df)} rows as a CSV table: {csv_path.relative_to(csv_path.parent.parent)}")
-    postprocess_priloha(strip_df(df.copy()), **kwargs).to_csv(csv_path, index=False, sep=";")
+    logger.info(f"Saving {len(df)} rows as a CSV table: .../{csv_path.relative_to(csv_path.parent.parent.parent)}")
+    strip_df(df).to_csv(csv_path, index=False, sep=";")
 
 
 def sort_priloha_2(df: DataFrame) -> DataFrame:
@@ -311,6 +278,7 @@ def set_formats(wb: Workbook) -> dict:
         "default": wb.add_format({**P_FMT.TEXT_WRAP, **P_FMT.DEFAULT_FONT}),
         "diff_added": wb.add_format({**P_FMT.LIGHT_GREEN_BG}),
         "diff_edited": wb.add_format({**P_FMT.LIGHT_YELLOW_BG}),
+        "diff_original": wb.add_format({**P_FMT.LIGHT_ORANGE_BG, **P_FMT.STRIKEOUT}),
         "diff_removed": wb.add_format({**P_FMT.LIGHT_RED_BG, **P_FMT.STRIKEOUT}),
         "diff_same": wb.add_format(),
         "italic": wb.add_format({**P_FMT.ITALIC_FONT, **P_FMT.TEXT_WRAP}),
