@@ -447,6 +447,7 @@ POISTOVNE = {
                 "preklady": {"nazvy_suborov": ["2023_24_03_PREKLAD_oprava.csv"], "argumenty": [{}]},
                 "vdg": {"nazvy_suborov": ["2023_24_04_VDG.csv"], "argumenty": [{}]},
                 "vykony": {"nazvy_suborov": ["2023_24_05_VYKON.csv"], "argumenty": [{}]},
+                "ppdrg": {"nazvy_suborov": ["2023_24_06_PPDRG.csv"], "argumenty": [{}]},
                 "poistenci": {"nazvy_suborov": ["2023_24_09_POISTENCI_oprava.csv"], "argumenty": [{}]},
                 "sumar": {"nazvy_suborov": ["2023_24_13_SUMAR.csv"], "argumenty": [{}]},
             },
@@ -589,6 +590,7 @@ POISTOVNE = {
                 "preklady": {"nazvy_suborov": ["2023_25_03_PREKLAD.csv"], "argumenty": [{}]},
                 "vdg": {"nazvy_suborov": ["2023_25_04_VDG.csv"], "argumenty": [{}]},
                 "vykony": {"nazvy_suborov": ["2023_25_05_VYKON.csv"], "argumenty": [{}]},
+                "ppdrg": {"nazvy_suborov": ["2023_25_06_PPDRG.csv"], "argumenty": [{}]},
                 "poistenci": {
                     "nazvy_suborov": ["2023_25_09_POISTENCI_oprava.csv", "2023_25_09_POISTENCI_doplnenie.csv"],
                     "argumenty": [{}, {}],
@@ -599,7 +601,7 @@ POISTOVNE = {
                         {
                             "usecols": [0, 1, 2],
                             "names": ["pzs_6", "typ_starostlivosti", "pocet"],
-                            "dtype": ["str", "str", "float"],
+                            "dtype": defaultdict(lambda: "str", pocet=float),
                         }
                     ],
                 },
@@ -753,6 +755,7 @@ POISTOVNE = {
                 "preklady": {"nazvy_suborov": ["2023_27_03_PREKLAD_oprava.csv"], "argumenty": [{}]},
                 "vdg": {"nazvy_suborov": ["2023_27_04_VDG_oprava.csv"], "argumenty": [{}]},
                 "vykony": {"nazvy_suborov": ["2023_27_05_VYKON_oprava.csv"], "argumenty": [{}]},
+                "ppdrg": {"nazvy_suborov": ["2023_27_06_PPDRG_oprava.csv"], "argumenty": [{"decimal": ","}]},
                 "poistenci": {"nazvy_suborov": ["2023_27_09_POISTENCI_oprava.csv"], "argumenty": [{}]},
                 "sumar": {"nazvy_suborov": ["2023_27_13_SUMAR_oprava.csv"], "argumenty": [{}]},
             },
@@ -762,7 +765,7 @@ POISTOVNE = {
 
 POISTIVNE_ARGS = {
     "uzs_jzs": {
-        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 17],
+        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17],
         "names": [
             "kod_zp",
             "id_poistenca",
@@ -777,7 +780,9 @@ POISTIVNE_ARGS = {
             "dgn_prepustenie",
             "kod_jednodnoveho_vykonu",
             "kod_operacneho_vykonu",
+            "typ_vykonu",
             "typ_hospitalizacie",
+            "pzs_12_odosielatel",
             "typ_starostlivosti",
         ],
         "header": 0,
@@ -787,7 +792,7 @@ POISTIVNE_ARGS = {
         "delimiter": "|",
     },
     "hp": {
-        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 26],
+        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 26],
         "names": [
             "kod_zp",
             "id_hp_pzs",
@@ -797,6 +802,7 @@ POISTIVNE_ARGS = {
             "datum_od",
             "datum_do",
             "osetrovacia_doba",
+            "dni_priepustka",
             "vek_dni",
             "vek_roky",
             "hmotnost",
@@ -806,6 +812,7 @@ POISTIVNE_ARGS = {
             "dovod_prijatia",
             "dovod_prepustenia",
             "hlavna_diagnoza",
+            "lokalizacia_hlavnej_diagnozy",
             "drg",
             "erv",
             "zlucene_hp",
@@ -834,8 +841,8 @@ POISTIVNE_ARGS = {
         "delimiter": "|",
     },
     "vdg": {
-        "usecols": [0, 1, 2],
-        "names": ["kod_zp", "id_hp", "vdg"],
+        "usecols": [0, 1, 2, 3],
+        "names": ["kod_zp", "id_hp", "vdg", "lok_vdg"],
         "header": 0,
         "dtype": defaultdict(lambda: "str", kod_zp="Int8"),
         "delimiter": "|",
@@ -851,6 +858,13 @@ POISTIVNE_ARGS = {
         ],
         "header": 0,
         "dtype": defaultdict(lambda: "str", kod_zp="Int8"),
+        "delimiter": "|",
+    },
+    "ppdrg": {
+        "usecols": [0, 1, 2, 3],
+        "names": ["kod_zp", "id_hp", "kod_drg_pp", "cena_drg_pp"],
+        "header": 0,
+        "dtype": defaultdict(lambda: "str", kod_zp="Int8", cena_drg_pp="float"),
         "delimiter": "|",
     },
     "poistenci": {
@@ -878,7 +892,115 @@ POISTIVNE_ARGS = {
         "usecols": [0, 1, 2, 3],
         "names": ["kod_zp", "pzs_6", "typ_starostlivosti", "pocet"],
         "header": 0,
-        "dtype": ["Int8", "str", "str", "Int32"],
+        "dtype": defaultdict(lambda: "str", kod_zp="Int8", pocet="Int32"),
         "delimiter": "|",
     },
+}
+
+COLUMNS_VS = [
+    "id_hp",
+    "vek_roky",
+    "vek_dni",
+    "hmotnost",
+    "upv",
+    "diagnozy",
+    "lokalizacia_hlavnej_diagnozy",
+    "lokalizacie_vedlajsich_diagnoz",
+    "vykony",
+    "drg",
+    "erv",
+    "typ_starostlivosti",
+    "typ_hospitalizacie",
+    "druh_prijatia",
+    "dovod_prijatia",
+    "dovod_prepustenia",
+    "posledna_dgn_prijem",
+    "posledna_dgn_prepustenie",
+    "posledny_pohyb_poistenca",
+    "diagnozy_z_01",
+    "vykony_z_01",
+    "novorodenec",
+    "obdobie_od",
+    "obdobie_do",
+    "datum_od",
+    "datum_do",
+    "osetrovacia_doba",
+    "dni_priepustka",
+    "id_poistenca",
+    "datum_narodenia",
+    "pohlavie",
+    "kod_pobytu",
+    "kod_zp",
+    "pzs_12",
+    "IDENTIFZAR",
+    "pzs_8",
+    "pzs_6",
+    "pzs_ico",
+    "id_hp_pzs",
+    "kod_drg_pp",
+    "cena_drg_pp",
+    "pzs_12_odosielatel",
+    "typ_vykonu",
+    "zlucene_hp",
+]
+
+COLUMNS_274 = {
+    1: "cislo_riadku",  # Pridané
+    2: "rodne_cislo",  # Prázdne
+    3: "meno_poistenca",  # Prázdne
+    4: "dgn_prijem",  # 1./10. agg. last
+    5: "dgn_prepustenie",  # 1./11. agg. last
+    6: "den_prijatia",  # Prázdne (dá sa dopočítať z 28: datum_prijatia)
+    7: "den_prepustenia",  # Prázdne (dá sa dopočítať z 28: datum_prijatia)
+    8: "pocet_lozkodni",  # Prázdne (dá sa dopočítať zo 46: dlzka_osetrovacej_doby a 47: dni_priepustka)
+    9: "pohyb_poistenca",  # 1./9. agg. list
+    10: "novorodenec",  # 1./6. agg. first
+    11: "zp_pripocitatelna_polozka",  # Prázdne
+    12: "mnozstvo",  # Prázdne
+    13: "cena",  # Prázdne
+    14: "nahrady",  # Prázdne
+    15: "pzs_12_odosielatel",  # 1./16. agg. first
+    16: "kod_pracovnika_odosielatel",  # Prázdne
+    17: "clensky_stat_poistenca",  # Prázdne
+    18: "id_poistenca",  # 1./2., 2./4. agg. custom
+    19: "pohlavie_poistenca",  # 9./4.
+    20: "stav_poistenca",  # Prázdne
+    21: "typ_vykonu",  # 1./14. agg. list
+    22: "kod_hlavneho_vykonu",  # v 2023 agg. custom, v 2024 1./13. agg. list
+    23: "pocet_operacnych_vykonov",  # Prázdne
+    24: "kod_ziskanej_komplikacie",  # Prázdne
+    25: "typ_hospitalizacie",  # 1./15. agg. first
+    26: "id_navrhu",  # v 2023 prázdne, v 2024 1./18.
+    27: "prijatie_s_komplikaciou",  # Prázdne
+    28: "datum_prijatia",  # 1./7., 2./6. agg. custom
+    29: "datum_prepustenia",  # 1./8., 2./7. agg. custom
+    30: "id_hp_pzs",  # 2./2.
+    31: "upv",  # 2./13.
+    32: "kody_vykonov",  # agg. custom
+    33: "lokalizacie_vykonov",  # agg. custom
+    34: "datumy_vykonov",  # agg. custom
+    35: "datum_narodenia",  # 9./3.
+    36: "druh_prijatia",  # 2./15.
+    37: "dovod_prijatia",  # 2./16.
+    38: "vek_dni",  # agg. custom
+    39: "vek_roky",  # agg. custom
+    40: "hmotnost",  # 2./12.
+    41: "druh_prepustenia",  # 2./17.
+    42: "kod_hlavnej_diagnozy",  # agg. custom
+    43: "lokalizacia_hlavnej_diagnozy",  # 2./19.
+    44: "kody_vedlajsich_diagnoz",  # agg. custom
+    45: "lokalizacie_vedlajsich_diagnoz",  # 4./4. agg. list
+    46: "dlzka_osetrovacej_doby",  # 2./8.
+    47: "dni_priepustka",  # 2./9.
+    48: "drg",  # 2./20.
+    49: "erv",  # 2./21.
+    50: "kod_drg_pp",  # 6./3. agg list
+    51: "cena_drg_pp",  # 6./4. agg list
+    52: "cas_prijatia",  # 1./7., 2./6. agg. custom
+    53: "cas_prepustenia",  # 1./8., 2./7. agg. custom
+    54: "zlucovane_hp",  # 2./22.
+    55: "kod_ms",  # v 2023 hlavná MS, v 2024 1./23.
+    56: "uroven_ms",  # v 2023 úroveň hlavnej MS, v 2024 1./24.
+    57: "kod_programu",  # v 2023 domovský program hlavnej MS, v 2024 1./25.
+    58: "pzs6",  # 1./4.,  2./5. agg. custom
 }
