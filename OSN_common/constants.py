@@ -974,7 +974,7 @@ COLUMNS_274 = {
     27: "prijatie_s_komplikaciou",  # Prázdne
     28: "datum_prijatia",  # 1./7., 2./6. agg. custom
     29: "datum_prepustenia",  # 1./8., 2./7. agg. custom
-    30: "id_hp_pzs",  # 2./2.
+    30: "id_hp",  # 2./3.
     31: "upv",  # 2./13.
     32: "kody_vykonov",  # agg. custom
     33: "lokalizacie_vykonov",  # agg. custom
@@ -1002,5 +1002,6 @@ COLUMNS_274 = {
     55: "kod_ms",  # v 2023 hlavná MS, v 2024 1./23.
     56: "uroven_ms",  # v 2023 úroveň hlavnej MS, v 2024 1./24.
     57: "kod_programu",  # v 2023 domovský program hlavnej MS, v 2024 1./25.
-    58: "pzs6",  # 1./4.,  2./5. agg. custom
+    58: "pzs_ico",  # 1./4.,  2./5. agg. custom
+    59: "id_hp_pzs",  # 2./2.
 }
