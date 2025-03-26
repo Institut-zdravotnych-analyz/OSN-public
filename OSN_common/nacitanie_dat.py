@@ -88,11 +88,7 @@ def nacitaj_zoznam_nemocnic():
 
 def nacitaj_zoznam_ms(verzia):
     return pd.read_csv(
-        _data_path
-        / "03_Prevodníky"
-        / "Vyhláška"
-        / f"{verzia}"
-        / f"zoznam_ms_{verzia}.csv",
+        _data_path / "03_Prevodníky" / "Vyhláška" / f"{verzia}" / f"zoznam_ms_{verzia}.csv",
         sep=";",
         dtype=defaultdict(
             lambda: "str",
@@ -109,11 +105,7 @@ def nacitaj_zoznam_ms(verzia):
 
 def nacitaj_programovy_profil(rok, verzia):
     return pd.read_csv(
-        _data_path
-        / "03_Prevodníky"
-        / "Vyhláška"
-        / f"{verzia}"
-        / f"programovy_profil_{verzia}_{rok}.csv",
+        _data_path / "03_Prevodníky" / "Vyhláška" / f"{verzia}" / f"programovy_profil_{verzia}_{rok}.csv",
         sep=";",
     )
 
@@ -153,9 +145,7 @@ def nacitaj_vystup_algoritmu(rok, verzia, prepinace_algoritmu=""):
 
 def nacitaj_vsetku_starostlivost_s_ms(rok, verzia):
     return pd.read_csv(
-        _data_path
-        / "01_Všetka starostlivosť"
-        / f"osn_vsetka_starostlivost_{rok}_ms_{verzia}.csv",
+        _data_path / "01_Všetka starostlivosť" / f"osn_vsetka_starostlivost_{rok}_ms_{verzia}.csv",
         sep=";",
         dtype=defaultdict(
             lambda: "str",
@@ -702,9 +692,7 @@ _poistovne = {
                         {
                             "usecols": [0, 1, 2],
                             "names": ["pzs_6", "typ_starostlivosti", "pocet"],
-                            "dtype": defaultdict(
-                                lambda: "str", kod_zp="Int8", pocet="float"
-                            ),
+                            "dtype": defaultdict(lambda: "str", kod_zp="Int8", pocet="float"),
                         }
                     ],
                 },
@@ -852,9 +840,7 @@ _poistovne = {
             2022: {
                 "uzs_jzs": {
                     "nazvy_suborov": ["osn_2022_27_01_uzs_jzs.csv"],
-                    "argumenty": [
-                        {"converters": {"datum_od": str.strip, "datum_do": str.strip}}
-                    ],
+                    "argumenty": [{"converters": {"datum_od": str.strip, "datum_do": str.strip}}],
                 },
                 "hp": {
                     "nazvy_suborov": [
@@ -965,9 +951,7 @@ def nacitaj_data_zp(rok, zoznam_zp):
     for kod in zoznam_zp:
         print(f'Nacitavam data pre poistovnu {_poistovne[kod]["nazov"]}')
 
-        datove_subory = (
-            _data_path / "06_Dáta od zdravotných poisťovní" / str(rok) / str(kod)
-        )
+        datove_subory = _data_path / "06_Dáta od zdravotných poisťovní" / str(rok) / str(kod)
 
         data[kod] = {}
 
@@ -977,26 +961,17 @@ def nacitaj_data_zp(rok, zoznam_zp):
             for _i in range(len(data_structure["nazvy_suborov"])):
 
                 nazov_suboru = data_structure["nazvy_suborov"][_i]
-                argumenty = (
-                    _predvolene_argumenty_nacitania[data_name]
-                    | data_structure["argumenty"][_i]
-                )
+                argumenty = _predvolene_argumenty_nacitania[data_name] | data_structure["argumenty"][_i]
 
                 print(f"Nacitavam data zo suboru {nazov_suboru}")
                 df = pd.read_csv(datove_subory / nazov_suboru, **argumenty)
 
-                stripped = (
-                    df.select_dtypes(include="object")
-                    .apply(lambda col: col.str.strip())
-                    .replace("", pd.NA)
-                )
+                stripped = df.select_dtypes(include="object").apply(lambda col: col.str.strip()).replace("", pd.NA)
                 df.loc[:, stripped.columns] = stripped
 
                 if "kod_zp" not in df.columns:
                     df.insert(0, "kod_zp", kod)
 
-                data[kod][data_name] = pd.concat(
-                    [data[kod][data_name], df], ignore_index=True
-                )
+                data[kod][data_name] = pd.concat([data[kod][data_name], df], ignore_index=True)
 
     return data

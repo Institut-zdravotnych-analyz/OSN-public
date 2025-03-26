@@ -16,11 +16,9 @@ def presun_stlpec(df, nazov_stlpca, nova_pozicia):
 
 def ziskaj_data_path():
     if data_path := os.environ.get("OSN_data"):
-        return Path(data_path)
+        return Path(data_path) / "11_Dátové súbory a prevodníky"
     else:
-        raise ValueError(
-            'V environmentalnej premennej "OSN_data" sa nenachadza cesta k datam.'
-        )
+        raise ValueError('V environmentalnej premennej "OSN_data" sa nenachadza cesta k datam.')
 
 
 def prirad_vekovu_kategoriu(vek_roky):
