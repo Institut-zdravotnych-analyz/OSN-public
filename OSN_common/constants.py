@@ -11,14 +11,18 @@ LOG_COLOR_SCHEME = {
 }
 
 LOG_FMT_FILE = "%(asctime)s %(levelname)8s -- %(message)s"
-LOG_FMT_CONSOLE = "%(log_color)s%(asctime)s %(levelname)8s -- %(reset)s%(white)s%(message)s"
+LOG_FMT_CONSOLE = (
+    "%(log_color)s%(asctime)s %(levelname)8s -- %(reset)s%(white)s%(message)s"
+)
 
 ### CONVERTERS
 
 INT_2_ROMAN = {1: "I", 2: "II", 3: "III", 4: "IV", 5: "V"}
 ROMAN_2_INT = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
 
-### PRILOHY - USEFUL COLS
+### PRILOHY - USEFUL DATA
+
+FALLBACK_MS = "S99-99"
 
 P1_MAIN_COLS = ["cislo_programu", "nazov_programu", "uroven_programu"]
 
@@ -34,7 +38,13 @@ P1_DATE_COLS = ["od", "do"]
 
 P2_MAIN_COLS = ["cislo_programu", "kod_ms", "zdielana_ms", "nazov_ms", "sposob_urcenia"]
 
-P2_UROVNE_COLS = ["uroven_ms_dospeli", "uroven_ms_deti_0", "uroven_ms_deti_1", "uroven_ms_deti_7", "uroven_ms_deti_16"]
+P2_UROVNE_COLS = [
+    "uroven_ms_dospeli",
+    "uroven_ms_deti_0",
+    "uroven_ms_deti_1",
+    "uroven_ms_deti_7",
+    "uroven_ms_deti_16",
+]
 
 P2_POVINNOSTI_MS_COLS = [
     "povinnost_ms_V",
@@ -46,8 +56,25 @@ P2_POVINNOSTI_MS_COLS = [
 
 P2_NUM_COLS = ["casova_dostupnost", "minimum_na_nemocnicu", "minimum_na_lekara"]
 
+# sposob urcenia mapped to Priloha where it could be found
+SPOSOB_2_PRILOHA = {
+    "D": ["p14", "p15"],
+    "DD": ["p10"],
+    "DRGD": ["p6"],
+    "M": ["p17"],
+    "MD": ["p9a"],
+    "MV": ["p7a", "p8a"],
+    "NOV": ["p5"],
+    "S": ["p16"],
+    "V": ["p12", "p13"],
+    "VD": ["p9"],
+    "VV": ["p7", "p8"],
+}
 
-# PRILOHY XLSX
+SPOSOBY_URCENIA_VALUES = sorted(SPOSOB_2_PRILOHA.keys())
+
+
+### PRILOHY XLSX
 class PrilohyXlsxMeta:
     P1 = {
         "columns": P1_MAIN_COLS + P1_POVINNOSTI_P_COLS + P1_DATE_COLS,
@@ -102,10 +129,16 @@ class PrilohyXlsxMeta:
             "P": 4.71,
             "Q": 10.5,
             "R": 10.5,
-            "S": 15,  # diff
+            "S": 25,  # diff
         },
         "description": "",
-        "diff_translations": {"added": "Pridaná MS", "removed": "Odstránená MS", "edited": "Upravená MS", "same": ""},
+        "diff_translations": {
+            "added": "Pridaná MS",
+            "removed": "Odstránená MS",
+            "edited": "Nová verzia MS",
+            "original": "Pôvodná verzia MS",
+            "same": "",
+        },
         "file": "02_Zoznam-medicinskych-sluzieb.xlsx",
         "order": 2,
         "title": "Zoznam medicínskych služieb so zaradením do programov a podmienky pre poskytnutie medicínskych služieb v nemocnici",
@@ -118,7 +151,10 @@ class PrilohyXlsxMeta:
 
     P4 = {"file": "04_Indikatory kvality pre ustavnu starostlivost.xlsx", "order": 4}
 
-    P5 = {"file": "05_Sposob urcenia medicinskej sluzby pre novorodencov_NOV.xlsx", "order": 5}
+    P5 = {
+        "file": "05_Sposob urcenia medicinskej sluzby pre novorodencov_NOV.xlsx",
+        "order": 5,
+    }
 
     P6 = {
         "file": "06_Sposob urcenia medicinskej sluzby podla skupiny klasifikacneho systemu a diagnozy_DRGD.xlsx",
@@ -137,13 +173,25 @@ class PrilohyXlsxMeta:
     }
 
     P9 = {
-        "columns": ["kod_hlavneho_vykonu", "nazov_hlavneho_vykonu", "skupina_diagnoz", "kod_ms", "nazov_ms"],
+        "columns": [
+            "kod_hlavneho_vykonu",
+            "nazov_hlavneho_vykonu",
+            "skupina_diagnoz",
+            "kod_ms",
+            "nazov_ms",
+        ],
         "file": "09_Sposob urcenie medicinskej sluzby podla hlavneho vykonu a diagnozy_VD.xlsx",
         "order": 9,
     }
 
     P10 = {
-        "columns": ["skupina_diagnoz", "kod_hlavnej_diagnozy", "nazov_hlavnej_diagnozy", "kod_ms", "nazov_ms"],
+        "columns": [
+            "skupina_diagnoz",
+            "kod_hlavnej_diagnozy",
+            "nazov_hlavnej_diagnozy",
+            "kod_ms",
+            "nazov_ms",
+        ],
         "file": "10_Sposob urcenia medicinskej sluzby podla hlavnej a vedlajsej diagnozy_DD.xlsx",
         "order": 10,
     }
@@ -174,13 +222,19 @@ class PrilohyXlsxMeta:
             "VVCH": "vrodené vývojové chyby",
         },
         "columns": ["kod_vykonu", "nazov_vykonu", "kod_ms", "nazov_ms"],
-        "columns_full": ["Kód výkonu", "Zdravotný výkon", "Kód medicínskej služby", "Medicínska služba"],
+        "columns_full": [
+            "Kód výkonu",
+            "Zdravotný výkon",
+            "Kód medicínskej služby",
+            "Medicínska služba",
+        ],
         "column_widths": {"A": 14.71, "B": 49.71, "C": 19.71, "D": 50.14, "E": 30},
         "description": "Ak bol poistencovi vo veku 18 rokov a menej poskytnutý hlavný zdravotný výkon podľa stĺpca 'zdravotný výkon', hospitalizácii sa určí medicínska služba podľa stĺpca 'medicínska služba' (V).",
         "diff_translations": {
-            "added": "Nové zaradenie výkonu",
+            "added": "Pridanie výkonu",
             "removed": "Odstránené zaradenie výkonu",
-            "edited": "Upravené zaradenie výkonu",
+            "edited": "Nové zaradenie výkonu",
+            "original": "Pôvodné zaradenie výkonu",
             "same": "",
         },
         "file": "12_Sposob urcenia medicinskej sluzby podla hlavneho vykonu pre deti_V.xlsx",
@@ -296,13 +350,19 @@ class PrilohyXlsxMeta:
             "NCMP": "náhla cievna mozgová príhoda",
         },
         "columns": ["kod_diagnozy", "nazov_diagnozy", "kod_ms", "nazov_ms"],
-        "columns_full": ["Kód diagnózy", "Hlavná diagnóza", "Kód medicínskej služby", "Medicínska služba"],
+        "columns_full": [
+            "Kód diagnózy",
+            "Hlavná diagnóza",
+            "Kód medicínskej služby",
+            "Medicínska služba",
+        ],
         "column_widths": {"A": 14.71, "B": 49.71, "C": 19.71, "D": 50.14, "E": 30},
         "description": "Ak bola poistencov vo veku 18 rokov a menej pri hospitalizácii vykázaná hlavná diagnóza podľa stĺpca 'hlavná diagnóza', hospitalizácii sa určí medicínska služba podľa stĺpca 'medicínska služba' (D).",
         "diff_translations": {
-            "added": "Nová diagnóza",
+            "added": "Pridanie diagnózy",
             "removed": "Odstránenie diagnózy",
-            "edited": "Preradenie diagnózy",
+            "edited": "Nové zaradenie diagnózy",
+            "original": "Pôvodné zaradenie diagnózy",
             "same": "",
         },
         "file": "14_Sposob urcenia medicinskej sluzby podla hlavnej diagnozy pre deti_D.xlsx",
@@ -321,9 +381,15 @@ class PrilohyXlsxMeta:
         "title": "Spôsob určenia medicínskej služby podľa hlavnej diagnózy pre poistencov vo veku viac ako 18 rokov",
     }
 
-    P16 = {"file": "16_Sposob urcenia medicinskej sluzby podla specialnych pravidiel_S.xlsx", "order": 16}
+    P16 = {
+        "file": "16_Sposob urcenia medicinskej sluzby podla specialnych pravidiel_S.xlsx",
+        "order": 16,
+    }
 
-    P17 = {"file": "17_Sposob urcenia medicinskej sluzby pre program 98.xlsx", "order": 17}
+    P17 = {
+        "file": "17_Sposob urcenia medicinskej sluzby pre program 98.xlsx",
+        "order": 17,
+    }
 
 
 class PrilohyXlsxFormats:
@@ -359,12 +425,32 @@ POISTOVNE = {
         "nazov": "dovera",
         "subory": {
             "2021": {
-                "uzs_jzs": {"nazvy_suborov": ["2021_24_01_UZS_JZS_UDAJE.csv"], "argumenty": [{"delimiter": ";"}]},
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2021_24_01_UZS_JZS_UDAJE.csv"],
+                    "argumenty": [{"delimiter": ";"}],
+                },
                 "hp": {
                     "nazvy_suborov": ["2021_24_02_HP_UDAJE.csv"],
                     "argumenty": [
                         {
-                            "usecols": [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 15, 17, 18, 19, 24],
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                8,
+                                9,
+                                10,
+                                11,
+                                15,
+                                17,
+                                18,
+                                19,
+                                24,
+                            ],
                             "names": [
                                 "kod_zp",
                                 "id_hp_pzs",
@@ -393,13 +479,25 @@ POISTOVNE = {
                         {
                             "delimiter": ";",
                             "usecols": [0, 1, 2, 3, 4],
-                            "names": ["id_hp", "pzs_12", "datum_od", "datum_do", "kod_zp"],
+                            "names": [
+                                "id_hp",
+                                "pzs_12",
+                                "datum_od",
+                                "datum_do",
+                                "kod_zp",
+                            ],
                         }
                     ],
                 },
                 "vdg": {
                     "nazvy_suborov": ["2021_24_04_HP_VDG.csv"],
-                    "argumenty": [{"delimiter": ";", "usecols": [0, 1, 3], "names": ["id_hp", "vdg", "kod_zp"]}],
+                    "argumenty": [
+                        {
+                            "delimiter": ";",
+                            "usecols": [0, 1, 3],
+                            "names": ["id_hp", "vdg", "kod_zp"],
+                        }
+                    ],
                 },
                 "vykony": {
                     "nazvy_suborov": ["2021_24_05_HP_ZV.csv"],
@@ -407,7 +505,13 @@ POISTOVNE = {
                         {
                             "delimiter": ";",
                             "usecols": [0, 1, 2, 3, 4],
-                            "names": ["id_hp", "kod_vykonu", "lokalizacia_vykonu", "datum_vykonu", "kod_zp"],
+                            "names": [
+                                "id_hp",
+                                "kod_vykonu",
+                                "lokalizacia_vykonu",
+                                "datum_vykonu",
+                                "kod_zp",
+                            ],
                         }
                     ],
                 },
@@ -442,12 +546,27 @@ POISTOVNE = {
                 "poistenci": {"nazvy_suborov": ["09_poistenci.csv"], "argumenty": [{}]},
             },
             "2023": {
-                "uzs_jzs": {"nazvy_suborov": ["2023_24_01_UZS_JZS_oprava.csv"], "argumenty": [{}]},
-                "hp": {"nazvy_suborov": ["2023_24_02_HP_oprava.csv"], "argumenty": [{}]},
-                "preklady": {"nazvy_suborov": ["2023_24_03_PREKLAD_oprava.csv"], "argumenty": [{}]},
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2023_24_01_UZS_JZS_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2023_24_02_HP_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2023_24_03_PREKLAD_oprava.csv"],
+                    "argumenty": [{}],
+                },
                 "vdg": {"nazvy_suborov": ["2023_24_04_VDG.csv"], "argumenty": [{}]},
-                "vykony": {"nazvy_suborov": ["2023_24_05_VYKON.csv"], "argumenty": [{}]},
-                "poistenci": {"nazvy_suborov": ["2023_24_09_POISTENCI_oprava.csv"], "argumenty": [{}]},
+                "vykony": {
+                    "nazvy_suborov": ["2023_24_05_VYKON.csv"],
+                    "argumenty": [{}],
+                },
+                "poistenci": {
+                    "nazvy_suborov": ["2023_24_09_POISTENCI_oprava.csv"],
+                    "argumenty": [{}],
+                },
                 "sumar": {"nazvy_suborov": ["2023_24_13_SUMAR.csv"], "argumenty": [{}]},
             },
         },
@@ -457,7 +576,10 @@ POISTOVNE = {
         "subory": {
             "2021": {
                 "uzs_jzs": {
-                    "nazvy_suborov": ["2021_25_01_JZS_UDAJE.csv", "2021_25_01_UZS_UDAJE.csv"],
+                    "nazvy_suborov": [
+                        "2021_25_01_JZS_UDAJE.csv",
+                        "2021_25_01_UZS_UDAJE.csv",
+                    ],
                     "argumenty": [
                         {
                             "delimiter": ";",
@@ -505,7 +627,24 @@ POISTOVNE = {
                     "argumenty": [
                         {
                             "header": None,
-                            "usecols": [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 15, 17, 18, 19, 24],
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                8,
+                                9,
+                                10,
+                                11,
+                                15,
+                                17,
+                                18,
+                                19,
+                                24,
+                            ],
                             "names": [
                                 "kod_zp",
                                 "id_hp_pzs",
@@ -534,13 +673,25 @@ POISTOVNE = {
                         {
                             "header": None,
                             "usecols": [0, 1, 2, 3, 4],
-                            "names": ["id_hp", "pzs_12", "datum_od", "datum_do", "kod_zp"],
+                            "names": [
+                                "id_hp",
+                                "pzs_12",
+                                "datum_od",
+                                "datum_do",
+                                "kod_zp",
+                            ],
                         }
                     ],
                 },
                 "vdg": {
                     "nazvy_suborov": ["2021_25_04_HP_VDG.csv"],
-                    "argumenty": [{"header": None, "usecols": [0, 1, 3], "names": ["id_hp", "vdg", "kod_zp"]}],
+                    "argumenty": [
+                        {
+                            "header": None,
+                            "usecols": [0, 1, 3],
+                            "names": ["id_hp", "vdg", "kod_zp"],
+                        }
+                    ],
                 },
                 "vykony": {
                     "nazvy_suborov": ["2021_25_05_HP_ZV.csv"],
@@ -548,7 +699,13 @@ POISTOVNE = {
                         {
                             "header": None,
                             "usecols": [0, 1, 2, 3, 4],
-                            "names": ["id_hp", "kod_vykonu", "lokalizacia_vykonu", "datum_vykonu", "kod_zp"],
+                            "names": [
+                                "id_hp",
+                                "kod_vykonu",
+                                "lokalizacia_vykonu",
+                                "datum_vykonu",
+                                "kod_zp",
+                            ],
                         }
                     ],
                 },
@@ -576,21 +733,54 @@ POISTOVNE = {
                 },
             },
             "2022": {
-                "uzs_jzs": {"nazvy_suborov": ["2022_25_01_UZS_JZS.csv"], "argumenty": [{"header": None}]},
-                "hp": {"nazvy_suborov": ["2022_25_02_HP.csv"], "argumenty": [{"header": None}]},
-                "preklady": {"nazvy_suborov": ["2022_25_03_PREKLAD.csv"], "argumenty": [{"header": None}]},
-                "vdg": {"nazvy_suborov": ["2022_25_04_VDG.csv"], "argumenty": [{"header": None}]},
-                "vykony": {"nazvy_suborov": ["2022_25_05_VYKON.csv"], "argumenty": [{"header": None}]},
-                "poistenci": {"nazvy_suborov": ["2022_25_09_POISTENCI.csv"], "argumenty": [{"header": None}]},
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2022_25_01_UZS_JZS.csv"],
+                    "argumenty": [{"header": None}],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2022_25_02_HP.csv"],
+                    "argumenty": [{"header": None}],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2022_25_03_PREKLAD.csv"],
+                    "argumenty": [{"header": None}],
+                },
+                "vdg": {
+                    "nazvy_suborov": ["2022_25_04_VDG.csv"],
+                    "argumenty": [{"header": None}],
+                },
+                "vykony": {
+                    "nazvy_suborov": ["2022_25_05_VYKON.csv"],
+                    "argumenty": [{"header": None}],
+                },
+                "poistenci": {
+                    "nazvy_suborov": ["2022_25_09_POISTENCI.csv"],
+                    "argumenty": [{"header": None}],
+                },
             },
             "2023": {
-                "uzs_jzs": {"nazvy_suborov": ["2023_25_01_UZS_JZS_oprava.csv"], "argumenty": [{}]},
-                "hp": {"nazvy_suborov": ["2023_25_02_HP_oprava.csv"], "argumenty": [{}]},
-                "preklady": {"nazvy_suborov": ["2023_25_03_PREKLAD.csv"], "argumenty": [{}]},
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2023_25_01_UZS_JZS_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2023_25_02_HP_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2023_25_03_PREKLAD.csv"],
+                    "argumenty": [{}],
+                },
                 "vdg": {"nazvy_suborov": ["2023_25_04_VDG.csv"], "argumenty": [{}]},
-                "vykony": {"nazvy_suborov": ["2023_25_05_VYKON.csv"], "argumenty": [{}]},
+                "vykony": {
+                    "nazvy_suborov": ["2023_25_05_VYKON.csv"],
+                    "argumenty": [{}],
+                },
                 "poistenci": {
-                    "nazvy_suborov": ["2023_25_09_POISTENCI_oprava.csv", "2023_25_09_POISTENCI_doplnenie.csv"],
+                    "nazvy_suborov": [
+                        "2023_25_09_POISTENCI_oprava.csv",
+                        "2023_25_09_POISTENCI_doplnenie.csv",
+                    ],
                     "argumenty": [{}, {}],
                 },
                 "sumar": {
@@ -638,7 +828,24 @@ POISTOVNE = {
                     "nazvy_suborov": ["2021_27_02_HP_UDAJE.csv"],
                     "argumenty": [
                         {
-                            "usecols": [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 15, 17, 18, 19, 24],
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                8,
+                                9,
+                                10,
+                                11,
+                                15,
+                                17,
+                                18,
+                                19,
+                                24,
+                            ],
                             "names": [
                                 "kod_zp",
                                 "id_hp_pzs",
@@ -664,19 +871,36 @@ POISTOVNE = {
                 "preklady": {
                     "nazvy_suborov": ["2021_27_03_HP_PREKLADY.csv"],
                     "argumenty": [
-                        {"usecols": [0, 1, 2, 3, 4], "names": ["id_hp", "pzs_12", "datum_od", "datum_do", "kod_zp"]}
+                        {
+                            "usecols": [0, 1, 2, 3, 4],
+                            "names": [
+                                "id_hp",
+                                "pzs_12",
+                                "datum_od",
+                                "datum_do",
+                                "kod_zp",
+                            ],
+                        }
                     ],
                 },
                 "vdg": {
                     "nazvy_suborov": ["2021_27_04_HP_VDG.csv"],
-                    "argumenty": [{"usecols": [0, 1, 3], "names": ["id_hp", "vdg", "kod_zp"]}],
+                    "argumenty": [
+                        {"usecols": [0, 1, 3], "names": ["id_hp", "vdg", "kod_zp"]}
+                    ],
                 },
                 "vykony": {
                     "nazvy_suborov": ["2021_27_05_HP_ZV.csv"],
                     "argumenty": [
                         {
                             "usecols": [0, 1, 2, 3, 4],
-                            "names": ["id_hp", "kod_vykonu", "lokalizacia_vykonu", "datum_vykonu", "kod_zp"],
+                            "names": [
+                                "id_hp",
+                                "kod_vykonu",
+                                "lokalizacia_vykonu",
+                                "datum_vykonu",
+                                "kod_zp",
+                            ],
                         }
                     ],
                 },
@@ -706,10 +930,20 @@ POISTOVNE = {
             "2022": {
                 "uzs_jzs": {
                     "nazvy_suborov": ["osn_2022_27_01_uzs_jzs.csv"],
-                    "argumenty": [{"converters": {"datum_od": "str.strip", "datum_do": "str.strip"}}],
+                    "argumenty": [
+                        {
+                            "converters": {
+                                "datum_od": "str.strip",
+                                "datum_do": "str.strip",
+                            }
+                        }
+                    ],
                 },
                 "hp": {
-                    "nazvy_suborov": ["osn_2022_27_02_hp.csv", "osn_nonDRG_2022_27_02_hp.csv"],
+                    "nazvy_suborov": [
+                        "osn_2022_27_02_hp.csv",
+                        "osn_nonDRG_2022_27_02_hp.csv",
+                    ],
                     "argumenty": [
                         {
                             "converters": {
@@ -726,20 +960,47 @@ POISTOVNE = {
                                 "datum_narodenia": "str.strip",
                             },
                             "decimal": ",",
-                            "usecols": [0, 1, 2, 3, 4, 6, 7, 10, 11, 12, 13, 14, 18, 20, 21, 22, 27],
+                            "usecols": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                6,
+                                7,
+                                10,
+                                11,
+                                12,
+                                13,
+                                14,
+                                18,
+                                20,
+                                21,
+                                22,
+                                27,
+                            ],
                         },
                     ],
                 },
                 "preklady": {
-                    "nazvy_suborov": ["osn_2022_27_03_preklad.csv", "osn_nonDRG_2022_27_03_preklad.csv"],
+                    "nazvy_suborov": [
+                        "osn_2022_27_03_preklad.csv",
+                        "osn_nonDRG_2022_27_03_preklad.csv",
+                    ],
                     "argumenty": [{}, {}],
                 },
                 "vdg": {
-                    "nazvy_suborov": ["osn_2022_27_04_vdg.csv", "osn_nonDRG_2022_27_04_vdg.csv"],
+                    "nazvy_suborov": [
+                        "osn_2022_27_04_vdg.csv",
+                        "osn_nonDRG_2022_27_04_vdg.csv",
+                    ],
                     "argumenty": [{}, {}],
                 },
                 "vykony": {
-                    "nazvy_suborov": ["osn_2022_27_05_vykon.csv", "osn_nonDRG_2022_27_05_vykon.csv"],
+                    "nazvy_suborov": [
+                        "osn_2022_27_05_vykon.csv",
+                        "osn_nonDRG_2022_27_05_vykon.csv",
+                    ],
                     "argumenty": [{}, {}],
                 },
                 "poistenci": {
@@ -748,13 +1009,34 @@ POISTOVNE = {
                 },
             },
             "2023": {
-                "uzs_jzs": {"nazvy_suborov": ["2023_27_01_UZS_JZS_oprava.csv"], "argumenty": [{}]},
-                "hp": {"nazvy_suborov": ["2023_27_02_HP_oprava.csv"], "argumenty": [{"decimal": ","}]},
-                "preklady": {"nazvy_suborov": ["2023_27_03_PREKLAD_oprava.csv"], "argumenty": [{}]},
-                "vdg": {"nazvy_suborov": ["2023_27_04_VDG_oprava.csv"], "argumenty": [{}]},
-                "vykony": {"nazvy_suborov": ["2023_27_05_VYKON_oprava.csv"], "argumenty": [{}]},
-                "poistenci": {"nazvy_suborov": ["2023_27_09_POISTENCI_oprava.csv"], "argumenty": [{}]},
-                "sumar": {"nazvy_suborov": ["2023_27_13_SUMAR_oprava.csv"], "argumenty": [{}]},
+                "uzs_jzs": {
+                    "nazvy_suborov": ["2023_27_01_UZS_JZS_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "hp": {
+                    "nazvy_suborov": ["2023_27_02_HP_oprava.csv"],
+                    "argumenty": [{"decimal": ","}],
+                },
+                "preklady": {
+                    "nazvy_suborov": ["2023_27_03_PREKLAD_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "vdg": {
+                    "nazvy_suborov": ["2023_27_04_VDG_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "vykony": {
+                    "nazvy_suborov": ["2023_27_05_VYKON_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "poistenci": {
+                    "nazvy_suborov": ["2023_27_09_POISTENCI_oprava.csv"],
+                    "argumenty": [{}],
+                },
+                "sumar": {
+                    "nazvy_suborov": ["2023_27_13_SUMAR_oprava.csv"],
+                    "argumenty": [{}],
+                },
             },
         },
     },
@@ -787,7 +1069,29 @@ POISTIVNE_ARGS = {
         "delimiter": "|",
     },
     "hp": {
-        "usecols": [0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 26],
+        "usecols": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            19,
+            20,
+            21,
+            26,
+        ],
         "names": [
             "kod_zp",
             "id_hp_pzs",
