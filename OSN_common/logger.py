@@ -1,9 +1,10 @@
-import colorlog
 import logging
-from pathlib import Path
 import sys
+from pathlib import Path
 
-from OSN_common.constants import LOG_COLOR_SCHEME, LOG_FMT_FILE, LOG_FMT_CONSOLE
+import colorlog
+
+from OSN_common.constants import LOG_COLOR_SCHEME, LOG_FMT_CONSOLE, LOG_FMT_FILE
 
 
 class ColorLogger:
@@ -35,7 +36,7 @@ class ColorLogger:
 
         # prevents logger to stack in Jupyter console when ran multiple times
         while self.logger.hasHandlers():
-            self.logger.handlers[0].close
+            self.logger.handlers[0].close()
             self.logger.removeHandler(self.logger.handlers[0])
 
         # logging to console

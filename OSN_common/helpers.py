@@ -1,10 +1,11 @@
 import json
-import pandas as pd
-from pandas import DataFrame, Series
-from pathlib import Path
 import re
+from pathlib import Path
 from typing import Any, Iterable
 from unicodedata import normalize
+
+import pandas as pd
+from pandas import DataFrame, Series
 
 from OSN_common.logger import logger
 
@@ -39,7 +40,7 @@ def check_path_existence(paths: Iterable[Path]) -> None:
         if not p.exists():
             logger.warning(f"Path does not exist! {p}")
             return
-    logger.info("✅ All paths exist")
+    logger.debug("✅ All paths exist")
 
 
 def drop_duplicates(df: DataFrame, keep="last") -> DataFrame:
@@ -63,6 +64,7 @@ def fillna_empty_list(s: Series):
 
 
 def load_json(file: str | Path) -> list | dict:
+    logger.debug(f"Loading JSON file: {file}")
     with open(file, "r") as f:
         return json.load(f)
 
@@ -81,6 +83,14 @@ def norm_path(p: Path) -> Path:
     Normalize path so that e.g. accentation is consistent between multiple OS (e.g. 'š' between MacOS and Windows)
     """
     return Path(normalize("NFC", str(p)))
+
+
+def save_csv(df: DataFrame, csv_path: Path):
+    """
+    Save table 'df' as CSV
+    """
+    logger.info(f"Saving table as CSV: {csv_path}")
+    df.to_csv(csv_path, index=False, sep=";")
 
 
 def standardize_text(text: str) -> str:

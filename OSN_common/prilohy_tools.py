@@ -1,6 +1,7 @@
+from pathlib import Path
+
 import pandas as pd
 from pandas import DataFrame
-from pathlib import Path
 from xlsxwriter.workbook import Workbook
 
 import OSN_common.constants as c
