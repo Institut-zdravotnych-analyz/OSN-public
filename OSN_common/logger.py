@@ -1,9 +1,10 @@
-import colorlog
 import logging
-from pathlib import Path
 import sys
+from pathlib import Path
 
-from OSN_common.constants import LOG_COLOR_SCHEME, LOG_FMT_FILE, LOG_FMT_CONSOLE
+import colorlog
+
+from OSN_common.constants import LOG_COLOR_SCHEME, LOG_FMT_CONSOLE, LOG_FMT_FILE
 
 
 class ColorLogger:
@@ -39,7 +40,10 @@ class ColorLogger:
 
         # logging to console
         formatter = colorlog.ColoredFormatter(
-            fmt=LOG_FMT_CONSOLE, datefmt="%H:%M:%S", reset=True, log_colors=LOG_COLOR_SCHEME
+            fmt=LOG_FMT_CONSOLE,
+            datefmt="%H:%M:%S",
+            reset=True,
+            log_colors=LOG_COLOR_SCHEME,
         )
         handler = logging.StreamHandler(stream=sys.stdout)
         handler.setFormatter(formatter)
@@ -57,7 +61,7 @@ class ColorLogger:
             print(f"Initialised logfile at: {log_file}")
 
     def setlevel(self, level: str):
-        self.log_file = level
+        self.log_level = level
         self.logger.setLevel(self.NAME_2_LEVEL[level])
 
     def debug(self, msg: str):
