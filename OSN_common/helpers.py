@@ -1,7 +1,7 @@
 import json
 import re
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Iterable
 from unicodedata import normalize
 
 import pandas as pd
@@ -10,7 +10,7 @@ from pandas import DataFrame, Series
 from OSN_common.logger import logger
 
 
-def categorize_age(age: Any) -> str:
+def categorize_age(age: int | None) -> str:
     """
     Categorize age into age groups
     """
@@ -91,6 +91,16 @@ def save_csv(df: DataFrame, csv_path: Path):
     """
     logger.info(f"Saving table as CSV: {csv_path}")
     df.to_csv(csv_path, index=False, sep=";")
+
+
+def shorten_path(p: Path, from_dir: Path) -> str:
+    """
+    Shorten path for logging purposes
+    """
+    if from_dir not in p:
+        return str(p)
+
+    return f".../{p.relative_to(from_dir.parent)}"
 
 
 def standardize_text(text: str) -> str:

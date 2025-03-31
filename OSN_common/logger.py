@@ -29,10 +29,9 @@ class ColorLogger:
         if `log_file` is not provided, logger streams only to console.
         """
 
-        self.log_file = log_file
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(self.NAME_2_LEVEL[log_level])
         self.logger.propagate = False
+        self.setlevel(log_level)
 
         # prevents logger to stack in Jupyter console when ran multiple times
         while self.logger.hasHandlers():
@@ -41,7 +40,10 @@ class ColorLogger:
 
         # logging to console
         formatter = colorlog.ColoredFormatter(
-            fmt=LOG_FMT_CONSOLE, datefmt="%H:%M:%S", reset=True, log_colors=LOG_COLOR_SCHEME
+            fmt=LOG_FMT_CONSOLE,
+            datefmt="%H:%M:%S",
+            reset=True,
+            log_colors=LOG_COLOR_SCHEME,
         )
         handler = logging.StreamHandler(stream=sys.stdout)
         handler.setFormatter(formatter)
@@ -57,6 +59,10 @@ class ColorLogger:
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
             print(f"Initialised logfile at: {log_file}")
+
+    def setlevel(self, level: str):
+        self.log_level = level
+        self.logger.setLevel(self.NAME_2_LEVEL[level])
 
     def debug(self, msg: str):
         self.logger.debug(msg)
