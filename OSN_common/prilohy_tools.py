@@ -220,18 +220,22 @@ def load_priloha_8a(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
 
 
 def load_priloha_9(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFrame]:
-    """Load data from XLSX file of Príloha 9"""
+    """Load data from XLSX file of Príloha 9
+    Warning: Relies on the order of rows in the XLSX file.
+    """
     df = pd.read_excel(xlsx_path, names=PRILOHY.P9["columns"], dtype=str)
     df = df[df["kod_ms"].notna()].reset_index(drop=True)
 
     # MS part
     df_ms = filter_valid_kod_ms(df)
+    # TODO: make this more robust (don't rely on the order of rows)
     first_ms_dospeli = "S02-04"
     first_ms_idx = df_ms["kod_ms"][df_ms["kod_ms"] == first_ms_dospeli].index[0]
     df_deti = df_ms.iloc[:first_ms_idx]
     df_dospeli = df_ms.iloc[first_ms_idx:]
 
     # Diags part
+    # TODO: make this more robust (don't rely on the order of rows)
     first_diag = "c910-"
     first_diag_idx = df["kod_ms"][df["kod_ms"] == first_diag].index[0]
     df_diags = df.iloc[first_diag_idx:].reset_index(drop=True)
@@ -247,13 +251,16 @@ def load_priloha_9(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFra
 
 
 def load_priloha_9a(xlsx_path: str | Path) -> DataFrame:
-    """Load data from XLSX file of Príloha 9a"""
+    """Load data from XLSX file of Príloha 9a
+    Warning: Relies on the order of rows in the XLSX file.
+    """
     df = pd.read_excel(xlsx_path, names=PRILOHY.P9a["columns"], dtype=str)
     df_markera = filter_valid_kod_ms(df, col_kod_ms="kod_hlavnej_diagnozy")
     kod_markera, nazov_markera, _, kod_ms, nazov_ms = df_markera.loc[0].values
 
     # diagnozy
     df = df.dropna(subset="kod_hlavnej_diagnozy").reset_index(drop=True)
+    # TODO: make this more robust (don't rely on the order of rows)
     first_diag = "f431"
     first_diag_idx = df["kod_hlavnej_diagnozy"][df["kod_hlavnej_diagnozy"] == first_diag].index[0]
     df = df.iloc[first_diag_idx:].reset_index(drop=True)
