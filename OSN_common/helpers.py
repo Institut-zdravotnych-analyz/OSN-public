@@ -28,8 +28,7 @@ def categorize_age(age: int | None) -> str:
     if age >= 0:
         return "deti_0"
 
-    logger.warning(f"Unrecognized age value: {age}")
-    return f"Unrecognized age {age}"
+    raise ValueError(f"Unrecognized age value: {age}")
 
 
 def check_path_existence(paths: Iterable[Path]) -> None:

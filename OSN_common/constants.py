@@ -83,14 +83,19 @@ class PrilohyXlsxMeta:
             "Dátum uplatňovania profilu - od",
             "Dátum uplatňovania profilu - do",
         ],
-        "footer": {
-            "P": "povinný program podľa § 2 ods. 17 zákona, program príslušnej úrovne je povinný v danej úrovni nemocnice",
-            "D": "doplnkový program podľa § 2 ods. 19 zákona, program príslušnej úrovne môže nemocnica danej úrovne poskytovať ako doplnkový, a to na základe povolenia Komisie pre tvorbu siete pri vyhodnotení potreby v regióne",
-            "N": "nepovinný program podľa § 2 ods. 18 zákona, program príslušnej úrovne je nepovinný v danej úrovni nemocnice, nemocnica ho môže poskytovať na základe zmluvy so zdravotnou poisťovňou",
-        },
         "file": "01_Programovy profil.xlsx",
         "index": "1",
         "title": "Programový profil pre každú úroveň nemocnice",
+        "vysvetlivky": [
+            {
+                "title": "Vysvetlivky skratiek:",
+                "rows": [
+                    "P - povinný program podľa § 2 ods. 17 zákona, program príslušnej úrovne je povinný v danej úrovni nemocnice",
+                    "D - doplnkový program podľa § 2 ods. 19 zákona, program príslušnej úrovne môže nemocnica danej úrovne poskytovať ako doplnkový, a to na základe povolenia Komisie pre tvorbu siete pri vyhodnotení potreby v regióne",
+                    "N - nepovinný program podľa § 2 ods. 18 zákona, program príslušnej úrovne je nepovinný v danej úrovni nemocnice, nemocnica ho môže poskytovať na základe zmluvy so zdravotnou poisťovňou",
+                ],
+            },
+        ],
     }
 
     P2 = {
@@ -156,8 +161,135 @@ class PrilohyXlsxMeta:
             "same": "",
         },
         "file": "02_Zoznam-medicinskych-sluzieb.xlsx",
+        "headers": ["Príloha č. 2", "k vyhláške č. .../... Z. z."],
         "index": "2",
         "title": "Zoznam medicínskych služieb so zaradením do programov a podmienky pre poskytnutie medicínskych služieb v nemocnici",
+        "vysvetlivky": [
+            {
+                "title": "Vek poistenca:",
+                "subtitle": "Vek pacienta sa radí do piatich skupín. Nižšie je presné rozdelenie s počtom rokov a dní:",
+                "rows": [
+                    "Deti do 1 roka:  od 0 dní do 364 dní",
+                    "Deti 1 - 6 rokov: od 1 roka a 0 dní do 6 rokov a 364 dní",
+                    "Deti 6 - 15 rokov: od 7 rokov a 0 dní do 15 rokova a 364 dní",
+                    "Deti 16-18 rokov: od 16 rokov a 0 dní do 18 rokov a 364 dní",
+                    "Dospelí: od 19 rokov a 0 dní",
+                ],
+            },
+            {
+                "title": "Úroveň medicínskej služby:",
+                "rows": [
+                    "1. Dospelí – úroveň medicnskej služby pre pacientov vo veku nad 18 rokov,",
+                    "2. Deti do 1r – úroveň medicnskej služby pre pacientov do dovŕšenia 1 roka veku,",
+                    "3. Deti 1-6r – úroveň medicnskej služby pre pacientov vo veku 1 až 6 rokov,",
+                    "4. Deti 7-15r – úroveň medicskej služby pre pacientov vo veku 7 až 15 rokov,",
+                    "5. Deti 16-18r – úroveň medicskej služby pre pacientov vo veku 16 až 18 rokov,",
+                ],
+            },
+            {
+                "title": "Zdieľaná medicínska služba:",
+                "subtitle": "ZD - zdieľaná medicínska služba, úroveň zdielanej služby určuje medicínsky program, kde je zaradená, ako aj časovú dostupnosť a minimálne počty na nemocnicu a lekára",
+            },
+            {
+                "title": "Spôsob určenia medicínskej služby:",
+                "rows": [
+                    "a) Hospitalizačný prípad sa spravidla zaraďuje do medicínskej služby a medicínskeho programu až po ukončení hospitalizácie.",
+                    "b) V prípade, ak hospitalizačný prípad začal v roku 2023, tento hospitalizačný prípad sa posudzuje podľa začatia hospitalizačného prípadu.To znamená, že sa na tieto hospitalizačné prípady nevzťahuje kategorizácia ústavnej zdravotnej starostlivosti, nakoľko v tom čase nebola účinná.",
+                    "c) V prípade platnosti nového právneho predpisu, t. j. kategorizačnej vyhlášky od určitého mesiaca, platí to isté ako pre bod b).",
+                ],
+            },
+            {
+                "title": "",
+                "rows": [
+                    "NOV - Označenie pre spôsob určenia medicínskej služby pre novorodenca, medicínska služba sa určí podľa skupiny klasifikačného systému alebo podľa skupiny klasifikačného systému a zdravotného výkonu alebo diagnózy podľa doplňujúceho kritéria podľa prílohy č. 5.",
+                    "DRGD - Označenie pre spôsob určenia medicínskej služby, ak bol hospitalizačný prípad zaradený do skupiny podľa klasifikačného systému začínajúcej na písmeno „W‟, medicínska služba sa určí podľa skupiny klasifikačného systému, do ktorej bol hospitalizačný prípad zaradený, a diagnózy podľa prílohy č. 6.",
+                    "VV - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý v kombinácii hlavný zdravotný výkon a jeden alebo viac zdravotných výkonov zo zoznamu ďalších zdravotných výkonov podľa prílohy č. 7 alebo č. 8, sa medicínska služba určí podľa kombinácie hlavného zdravotného výkonu a vykázaného zdravotného výkonu alebo podľa hlavného zdravotného výkonu a vykázaných zdravotných výkonov podľa prílohy č. 7 alebo č. 8,",
+                    "MV - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie vykázaný marker a minimálne jeden výkon zo zoznamu výkonov podľa prílohy č. 7a alebo č. 8a, medicínska služba sa určí podľa kombinácie markera a vykázaného zdravotného výkonu podľa prílohy č. 7a alebo č. 8a.",
+                    "VD - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý zdravotný výkon pri vykázanej diagnóze, ktorý zodpovedá kombinácii zdravotného výkonu a diagnózy podľa prílohy č. 9, medicínska služba sa určí podľa kombinácie hlavného zdravotného výkonu a diagnózy podľa prílohy č. 9.",
+                    "MD - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý zdravotný výkon pri vykázaní markera, ktorý zodpovedá kombinácii zdravotného výkonu a markera podľa prílohy č. 9a, medicínska služba sa určí podľa kombinácie markera a diagnózy podľa prílohy č. 9a.",
+                    "DD - Označenie pre spôsob určenia medicínskej služby, ak bola poistencovi počas hospitalizácie vykázaná kombinácia hlavnej a vedľajšej diagnózy, medicínska služba sa určí podľa kombinácie hlavnej diagnózy a diagnózy podľa prílohy č. 10.",
+                    "V - Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č. 12 alebo č. 13, medicínska služba sa určí podľa prílohy č. 12 alebo č. 13.",
+                    "D - Označenie pre spôsob určenia medicínskej služby, kedy sa medicínska služba pre poistencov určí podľa hlavnej diagnózy podľa prílohy č. 14 alebo 15; ak hlavná diagnóza pre hospitalizáciu nebola určená poskytovateľom zdravotnej starostlivosti, za hlavnú diagnózu sa považuje diagnóza pri prepustení.",
+                    "S - Označenie pre spôsob určenia medicínskej služby 'Identifikácia mŕtveho darcu orgánov' podľa prílohy č. 16,  ktorá sa môže vykonať spolu s medicínskymi službami určenými podľa spôsobu určenia podľa ostatných spôsobov určenia medicínskych služieb, medicínska služba sa určí podľa prílohy č. 16",
+                    "M - Spôsob určenia medicínskych služieb spadajúcich do programu č. 98 - v hospitalizačných prípadoch, v ktorých bol vykázaný marker zo zoznamu markerov v prílohe č. 17, medicínska služba sa určí podľa prílohy č. 17.",
+                    "Medicínska služba S99-99 nemá spôsob určenia medicínskej služby, do tejto medicínskej služby budú zaradené hospitalizačné prípady, ktoré neboli zaradené podľa vyššie uvedených spôsobom určenia medicínskej služby",
+                ],
+            },
+            {
+                "title": "Povinnosť medicínskej služby:",
+                "subtitle": "Povinnosť medicínskej služby sa stanovuje pre najvyššiu úroveň povinného programu alebo najvyššiu úroveň prideleného doplnkového programu alebo najvyššiu úroveň nepovinného programu. V prípade, že je úroveň nemocnice vyššia ako úroveň programu, povinnosť sa stanovuje podľa úrovne nemocnice.",
+            },
+            {
+                "title": "Označenie medicínskej služby:",
+                "rows": ["1. P – povinná medicínska služba", "2. N – nepovinná medicínska služba"],
+            },
+            {
+                "title": "Symboly pri minimálnych počtoch medicínskych služieb:",
+                "rows": [
+                    "Minimálny počet výkonov sa sčítava za všetky medicínske služby takto označené.",
+                    "Minimálny počet výkonov sa sčítava za všetky medicínske služby takto označené.",
+                    "Minimálny počet výkonov sa sčítava za všetky medicínske služby takto označené.",
+                    "30 % pacientov s nervovými ochoreniami rôznej etiológie.",
+                    "25 % pacientov s nervovými ochoreniami rôznej etiológie.",
+                    "20 % pacientov s nervovými ochoreniami rôznej etiológie.",
+                    "Minimálny počet výkonov sa sčítava za všetky medicínske služby takto označené.",
+                    "Minimálny počet výkonov sa sčítava za všetky medicínske služby takto označené.",
+                    "Minimálny počet výkonov sa sčítava za všetky medicínske služby takto označené.",
+                ],
+            },
+            {
+                "title": "Symboly pri čakacích lehotách:",
+                "subtitle": "Čakacia doba 10 dní sa týka iba novodiagnostikovaných pacientov",
+            },
+            {
+                "title": "Iné skratky:",
+                "rows": [
+                    "ASA - skóre pre posúdenie anesteziologického rizika podľa American Society of Anaesthesiology",
+                    "AV Shunt - Artério-venózny shunt",
+                    "BEVAR - z anglického branched endovascular aneurysm repair - nemá preklad",
+                    "BSL - úroveň biologickéj bezpečnosti",
+                    "C1 - C7 - stavce krčnej chrbtice",
+                    "CML - chronická myeloidná leukémia",
+                    "CMP - cievna mozgová príhoda",
+                    "CNS - centrálna nervová sústava",
+                    "CT - výpočtová tomografia",
+                    "DBS - hĺbková mozgová stimulácia",
+                    "DDC - dolné dýchacie cesty",
+                    "DM - diabetes mellitus",
+                    "EEG - elektroencefalografia",
+                    "EKG - elektrokardiografia",
+                    "EUG - extrauterinná gravidita",
+                    "FEVAR - z anglického fenestrated endovascular aneurysm repair - nemá preklad",
+                    "GERD - gastroezofageálna refluxová choroba",
+                    "GIT - gastrointestinálny trakt",
+                    "HIV - vírus ľudskej imunitnej nedostatočnosti",
+                    "HRCT - výčtová tomografia s vysokým priestorovým rozlíšením",
+                    "HSK - hysteroskopia",
+                    "CHEVAR - z anglického chimmey endovascular aneurysm repair - nemá preklad",
+                    "CHOCHP - chronická choroba pľúcna",
+                    "KP - koniec panvový",
+                    "L1 - L5 - stavce driekovej chrbtice",
+                    "LU - lymfatická uzlina",
+                    "MDS - myelodysplastický syndróm",
+                    "MPN - myeloproliferatívne neoplázie",
+                    "NCMP - náhla cievna mozgová porucha",
+                    "NHL - non Hodgkinov lymfóm",
+                    "NS - nervová sústava",
+                    "OP výkon - operačný výkon",
+                    "ORL - otorinolaryngológia",
+                    "PFAPA syndróm - syndróm periodickej horúčky",
+                    "Ph negatívne MP - Ph-negatívne myeloproliferatívne neoplázie",
+                    "PKI - perkutánna koronárna intervencia",
+                    "pPKI - primárna perkutánna koronárna intervencia",
+                    "S1 - S5 - stavce krížovej chrbtice",
+                    "T1 - T12 - stavce hrudnej chrbtice",
+                    "TBC - tuberkulóza",
+                    "UPV - umelá pľúcna ventilácia",
+                    "VAD - z anglického ventricular assist devices - mechanické podporné systémy srdca",
+                    "VVCH - vrodené vývojové chyby",
+                ],
+            },
+        ],
     }
 
     P3 = {
@@ -240,29 +372,6 @@ class PrilohyXlsxMeta:
     }
 
     P12 = {
-        "abbrvs": {
-            "AV Shunt": "Artério-venózny shunt",
-            "BEVAR": "z anglického branched endovascular aneurysm repair - nemá preklad",
-            "CMP": "cievna mozgová príhoda",
-            "CT": "výpočtová tomografia",
-            "DBS": "hĺbková mozgová stimulácia",
-            "EEG": "elektroencefalografia",
-            "EKG": "elektrokardiografia",
-            "EUG": "extrauterinná gravidita",
-            "FEVAR": "z anglického fenestrated endovascular aneurysm repair - nemá preklad",
-            "GERD": "gastroezofageálna refluxová choroba",
-            "HRCT": "výčtová tomografia s vysokým priestorovým rozlíšením",
-            "HSK": "hysteroskopia",
-            "CHEVAR": "z anglického chimmey endovascular aneurysm repair - nemá preklad",
-            "KP": "koniec panvový",
-            "LU": "lymfatická uzlina",
-            "MR": "magnetická rezonancia",
-            "ORL": "otorinolaryngológia",
-            "PKI": "perkutánna koronárna intervencia",
-            "pPKI": "primárna perkutánna koronárna intervencia",
-            "VAD": "z anglického ventricular assist devices - mechanické podporné systémy srdca",
-            "VVCH": "vrodené vývojové chyby",
-        },
         "columns": ["kod_vykonu", "nazov_vykonu", "kod_ms", "nazov_ms"],
         "columns_full": [
             "Kód výkonu",
@@ -280,9 +389,7 @@ class PrilohyXlsxMeta:
             "same": "",
         },
         "file": "12_Sposob urcenia medicinskej sluzby podla hlavneho vykonu pre deti_V.xlsx",
-        "footer": {
-            "V": "Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.13 alebo č. 14, medicínska služba sa určí podľa prílohy č. 13 alebo č. 14.",
-        },
+        "headers": ["Príloha č. 12", "k vyhláške č. .../... Z. z."],
         "index": "12",
         "programs_ordered": [
             48,
@@ -326,12 +433,47 @@ class PrilohyXlsxMeta:
             77,
         ],
         "title": "Spôsob určenia medicínskej služby podľa hlavného výkonu pre poistencov vo veku 18 rokov a menej",
+        "vysvetlivky": [
+            {
+                "title": "Vysvetlivky skratiek:",
+                "rows": [
+                    "AV Shunt - Artério-venózny shunt",
+                    "BEVAR - z anglického branched endovascular aneurysm repair - nemá preklad",
+                    "CMP - cievna mozgová príhoda",
+                    "CT - výpočtová tomografia",
+                    "DBS - hĺbková mozgová stimulácia",
+                    "EEG - elektroencefalografia",
+                    "EKG - elektrokardiografia",
+                    "EUG - extrauterinná gravidita",
+                    "FEVAR - z anglického fenestrated endovascular aneurysm repair - nemá preklad",
+                    "GERD - gastroezofageálna refluxová choroba",
+                    "HRCT - výčtová tomografia s vysokým priestorovým rozlíšením",
+                    "HSK - hysteroskopia",
+                    "CHEVAR - z anglického chimmey endovascular aneurysm repair - nemá preklad",
+                    "KP - koniec panvový",
+                    "LU - lymfatická uzlina",
+                    "MR - magnetická rezonancia",
+                    "ORL - otorinolaryngológia",
+                    "PKI - perkutánna koronárna intervencia",
+                    "pPKI - primárna perkutánna koronárna intervencia",
+                    "VAD - z anglického ventricular assist devices - mechanické podporné systémy srdca",
+                    "VVCH - vrodené vývojové chyby",
+                ],
+            },
+            {
+                "title": "Vysvetlivky:",
+                "rows": [
+                    "V - Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.13 alebo č. 14, medicínska služba sa určí podľa prílohy č. 13 alebo č. 14.",
+                ],
+            },
+        ],
     }
 
     P13 = {
         **P12,
         "description": "Ak bol poistencovi vo veku viac ako 18 rokov poskytnutý hlavný zdraovotný výkon podľa stĺpca 'zdravotný výkon', hospitalizácii sa určí medicínska služba podľa stĺpca 'medicínska služba' [V].",
         "file": "13_Sposob urcenia medicinskej sluzby podla hlavneho vykonu pre dospelych_V.xlsx",
+        "headers": ["Príloha č. 13", "k vyhláške č. .../... Z. z."],
         "index": "13",
         "programs_ordered": [
             17,
@@ -386,12 +528,6 @@ class PrilohyXlsxMeta:
     }
 
     P14 = {
-        "abbrvs": {
-            "AIM": "anestéziológia a intenzívna medicína",
-            "CNS": "centrálna nervová sústava",
-            "GIT": "gastrointestinálny trakt",
-            "NCMP": "náhla cievna mozgová príhoda",
-        },
         "columns": ["kod_diagnozy", "nazov_diagnozy", "kod_ms", "nazov_ms"],
         "columns_full": [
             "Kód diagnózy",
@@ -409,17 +545,33 @@ class PrilohyXlsxMeta:
             "same": "",
         },
         "file": "14_Sposob urcenia medicinskej sluzby podla hlavnej diagnozy pre deti_D.xlsx",
-        "footer": {
-            "D": "Označenie pre spôsob určenia medicínskej služby, kedy sa medicínska služba pre poistencov určí podľa hlavnej diagnózy podľa prílohy č. 14 alebo č. 15; ak hlavná diagnóza pre hospitalizáciu nebola určená poskytovateľom zdravotnej starostlivosti, za hlavnú diagnózu sa považuje diagnóza pri prepustení.",
-        },
+        "headers": ["Príloha č. 14", "k vyhláške č. .../... Z. z."],
         "index": "14",
         "title": "Spôsob určenia medicínskej služby podľa hlavnej diagnózy pre poistencov vo veku 18 rokov a menej",
+        "vysvetlivky": [
+            {
+                "title": "Vysvetlivky skratiek:",
+                "rows": [
+                    "AIM - anestéziológia a intenzívna medicína",
+                    "CNS - centrálna nervová sústava",
+                    "GIT - gastrointestinálny trakt",
+                    "NCMP - náhla cievna mozgová príhoda",
+                ],
+            },
+            {
+                "title": "Vysvetlivky:",
+                "rows": [
+                    "D - Označenie pre spôsob určenia medicínskej služby, kedy sa medicínska služba pre poistencov určí podľa hlavnej diagnózy podľa prílohy č. 14 alebo č. 15; ak hlavná diagnóza pre hospitalizáciu nebola určená poskytovateľom zdravotnej starostlivosti, za hlavnú diagnózu sa považuje diagnóza pri prepustení.",
+                ],
+            },
+        ],
     }
 
     P15 = {
         **P14,
         "description": "Ak bola poistencovi vo veku viac ako 18 rokov pri hospitalizácii vykázaná hlavná diagnóza podľa stĺpca 'hlavná diagnóza', hospitalizácii sa určí medicínska služba podľa stĺpca 'medicínska služba' [D].",
         "file": "15_Sposob urcenia medicinskej sluzby podla hlavnej diagnozy pre dospelych_D.xlsx",
+        "headers": ["Príloha č. 15", "k vyhláške č. .../... Z. z."],
         "index": "15",
         "title": "Spôsob určenia medicínskej služby podľa hlavnej diagnózy pre poistencov vo veku viac ako 18 rokov",
     }

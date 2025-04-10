@@ -11,8 +11,8 @@ import OSN_common.constants as c
 from OSN_common.helpers import standardize_text, strip_df
 from OSN_common.logger import logger
 
-PRILOHY = c.PrilohyXlsxMeta()
-P_FMT = c.PrilohyXlsxFormats()
+PRILOHY = c.PrilohyXlsxMeta
+P_FMT = c.PrilohyXlsxFormats
 
 
 def filter_valid_kod_ms(df: DataFrame, col_kod_ms: str = "kod_ms") -> DataFrame:
@@ -72,6 +72,10 @@ def load_priloha_2(xlsx_path: str | Path) -> DataFrame:
     # make numerical
     for col in c.UROVNE_MS_COLS:
         df[col] = df[col].replace(c.ROMAN_2_INT).astype("Int64")
+
+    # make uppercase
+    for col in c.POVINNOSTI_MS_COLS:
+        df[col] = df[col].str.upper()
 
     df.casova_dostupnost = df.casova_dostupnost.astype("Int64")
     df.minimum_na_nemocnicu = df.minimum_na_nemocnicu.apply(lambda x: int(x) if pd.notna(x) and "*" not in x else x)
@@ -425,7 +429,7 @@ def set_formats(wb: Workbook) -> dict[str, Any]:
                 **P_FMT.CENTER_ALIGN,
                 **P_FMT.TEXT_WRAP,
                 **P_FMT.GREY_BG,
-                **P_FMT.THICK_BOTTOM_BORDER,
+                **P_FMT.THIN_BOTTOM_BORDER,
             },
         ),
         "data_header_rotated": wb.add_format(
@@ -433,7 +437,7 @@ def set_formats(wb: Workbook) -> dict[str, Any]:
                 **P_FMT.BOLD_FONT,
                 **P_FMT.TEXT_WRAP,
                 **P_FMT.GREY_BG,
-                **P_FMT.THICK_BOTTOM_BORDER,
+                **P_FMT.THIN_BOTTOM_BORDER,
                 **P_FMT.RIGHT_ROTATION,
                 **P_FMT.CENTER_ALIGN,
             },
@@ -463,10 +467,17 @@ def set_formats(wb: Workbook) -> dict[str, Any]:
         "diff_same": wb.add_format(),
         "italic": wb.add_format({**P_FMT.ITALIC_FONT, **P_FMT.TEXT_WRAP}),
         "priloha_header": wb.add_format({**P_FMT.BOLD_FONT, **P_FMT.RIGHT_ALIGN}),
-        "program_header": wb.add_format(
+        "program_num": wb.add_format(
             {
                 **P_FMT.BOLD_FONT,
-                **P_FMT.TEXT_WRAP,
+                **P_FMT.CENTER_ALIGN,
+                **P_FMT.LIGHT_BLUE_BG,
+                **P_FMT.THIN_BOTTOM_BORDER,
+            },
+        ),
+        "program_name": wb.add_format(
+            {
+                **P_FMT.BOLD_FONT,
                 **P_FMT.LIGHT_BLUE_BG,
                 **P_FMT.THIN_BOTTOM_BORDER,
             },
