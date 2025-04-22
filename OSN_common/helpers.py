@@ -101,3 +101,33 @@ def strip_df(df: DataFrame) -> DataFrame:
     for col in cols_txt:
         df[col] = df[col].fillna("").astype(str).str.strip().replace("", pd.NA)
     return df
+
+def expand_diag(diag: str, zoznam_diagnoz: pd.DataFrame) -> list[str]:
+    """Returns a list of all existing diagnoses for a given diagnosis code and a list of diagnoses.
+    
+    It expects the list of diagnoses to have zoznam_koncovych_diagnoz pre-computed.
+    It expects the diagnosis code to always contain '-' at the end for nonterminal diagnoses.
+    """
+    if diag.endswith("-"):
+        return zoznam_diagnoz[zoznam_diagnoz.kod_skupiny_diagnoz == diag].zoznam_koncovych_diagnoz.values[0]
+    else:
+        return [diag]
+    
+def collapse_diags(diags: list[str], zoznam_diagnoz: pd.DataFrame) -> list[str]:
+    """Collapses a list of diagnosis codes to their largest common group in zoznam_diagnoz.
+    
+    e.g. codes ['d060', 'd061', 'd067', 'd069'] will be collapsed to ['d06-'].
+    If diags contains a group code as well as a diagnosis code from the group, only the group code remains.
+
+    It expects zoznam_diagnoz to have zoznam_koncovych_diagnoz pre-computed.
+    """
+    nonterminal = zoznam_diagnoz[zoznam_diagnoz.kod_skupiny_diagnoz.notna() & (zoznam_diagnoz.zoznam_koncovych_diagnoz.str.len() > 0)]
+    nonterminal = nonterminal.sort_values('kod_skupiny_diagnoz')
+    out = set()
+    for d in diags:
+        out = out.union(set(expand_diag(d, nonterminal)))
+    for _, r in nonterminal.iterrows():
+        if set(r.zoznam_koncovych_diagnoz).issubset(out):
+            out = out.difference(set(r.zoznam_koncovych_diagnoz))
+            out.add(r.kod_skupiny_diagnoz)
+    return sorted(out)
