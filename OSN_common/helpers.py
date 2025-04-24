@@ -40,6 +40,26 @@ def check_path_existence(paths: Iterable[Path]) -> None:
     logger.debug("✅ All paths exist")
 
 
+def collapse_diags(diags: list[str], diags_dct: pd.DataFrame) -> list[str]:
+    """Collapses a list of terminal diagnosis codes to their highest common group.
+    'diagnozy_df' is the raw form 'zoznam diagnoz' as it is returned by load_zoznam_diagnoz()
+
+    Examples:
+    ['d06-']                                                    ->      ['d06-']
+    ['d060', 'd061', 'd067', 'd069']                            ->      ['d06-']
+    ['d06-', 'd060', 'd061', 'd067', 'd069']                    ->      ['d06-']
+    ['a000', 'a001', 'a009', 'd060', 'd061', 'd067', 'd069']    ->      ['a00-', 'd06-']
+
+    """
+    diags_expanded = [expand_diags(d, diags_dct) for d in diags]
+    diags = set().union(*diags_expanded)
+    for skupina, koncove_diags in diags_dct.items():
+        if len(koncove_diags) > 0 and set(koncove_diags).issubset(diags):
+            diags = diags.difference(set(koncove_diags))
+            diags.add(skupina)
+    return sorted(diags)
+
+
 def drop_duplicates(df: DataFrame, keep: str = "last") -> DataFrame:
     """Dropping duplicated rows from dataframe - keeping last occurence only.
     Warning: Fails if df contains lists or other unhashable types
@@ -50,6 +70,30 @@ def drop_duplicates(df: DataFrame, keep: str = "last") -> DataFrame:
 
     logger.debug("✅ No duplicates found!")
     return df
+
+
+def expand_diags(diags: str | list[str], diags_dct: pd.DataFrame) -> list[str]:
+    """Expands a a list of diagnosis codes to their terminal values codes
+    'diagnozy_df' is the raw form 'zoznam diagnoz' as it is returned by load_zoznam_diagnoz()
+
+    Examples:
+    'd060'              ->      ['d060']
+    'd06-'              ->      ['d060', 'd061', 'd067', 'd069']
+    ['d06-', 'a00-']    ->      ['a000', 'a001', 'a009', 'd060', 'd061', 'd067', 'd069']
+
+    Warning: Not raising error for non-existing diagnoses.
+
+    """
+    if isinstance(diags, str):
+        diags = [diags]
+
+    diags_out = []
+    for d in diags:
+        d = d.strip().lower()
+        diags_add = diags_dct.get(d, [d])
+        diags_out.extend(diags_add)
+
+    return sorted(set(diags_out))
 
 
 def fillna_empty_list(s: Series) -> Series:
