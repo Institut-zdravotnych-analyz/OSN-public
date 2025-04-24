@@ -11,8 +11,10 @@ from pandas import DataFrame, Series
 
 from OSN_common.logger import logger
 
+from .types import NA
 
-def categorize_age(age: int | None) -> str:
+
+def categorize_age(age: int | NA) -> str | NA:
     """Categorize age into age groups"""
     if pd.isna(age):
         return pd.NA

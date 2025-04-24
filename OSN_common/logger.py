@@ -7,6 +7,8 @@ import colorlog
 
 from OSN_common.constants import LOG_COLOR_SCHEME, LOG_FMT_CONSOLE, LOG_FMT_FILE
 
+from .types import FrozenDict
+
 
 class ColorLogger:
     """Properties:
@@ -15,13 +17,15 @@ class ColorLogger:
     - colorizing logs
     """
 
-    NAME_2_LEVEL = {
-        "debug": logging.DEBUG,
-        "info": logging.INFO,
-        "warning": logging.WARNING,
-        "error": logging.ERROR,
-        "critical": logging.CRITICAL,
-    }
+    NAME_2_LEVEL = FrozenDict(
+        {
+            "debug": logging.DEBUG,
+            "info": logging.INFO,
+            "warning": logging.WARNING,
+            "error": logging.ERROR,
+            "critical": logging.CRITICAL,
+        }
+    )
 
     def __init__(self, log_file: str | None = None, log_level: str = "debug") -> None:
         """Initialize logger with custom formatting and color scheme.

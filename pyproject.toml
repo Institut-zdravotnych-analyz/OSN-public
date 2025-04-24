@@ -16,14 +16,14 @@ target-version = "py311"
 select = ["ALL"]
 
 # ignore specific rules - check more on https://docs.astral.sh/ruff/rules/<code>
-ignore = ["COM812", "D205", "D400", "D401", "D415", "EM101", "EM102", "FIX002", "G004", "PD011", "PD901", "PLR0911", "PLR2004", "PLW2901", "RUF001", "RUF012", "TD002", "TD003", "TRY003"]
+ignore = ["COM812", "D205", "D400", "D401", "D415", "EM101", "EM102", "FIX002", "G004", "PD011", "PD901", "PLR2004", "PLW2901", "RUF001", "TD002", "TD003", "TRY003"]
 
 # disable on-save auto-removal of unused imports
 unfixable = ["F401"]
 
 [tool.ruff.lint.per-file-ignores]
-# ignore long lines in constants (long texts)
-"constants.py" = ["E501"]
+# ignore long lines in constants (long texts) and mutable objects (we make them immutable by custom types)
+"constants.py" = ["E501", "RUF012"]
 
 # ignore missing docstrings in wrappers
 "logger.py" = ["D102"]
