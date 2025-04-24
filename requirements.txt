@@ -1,8 +1,8 @@
-colorlog~=6.9.0
-frozendict~=2.4.6
-frozenlist~=1.5.0
-openpyxl~=3.1.5
+colorlog~=6.9
+frozendict~=2.4
+frozenlist~=1.5
+openpyxl~=3.1
 pandas~=2.2
-ruff~=0.11.2
+ruff~=0.11
 tqdm~=4.67
-XlsxWriter~=3.2.2
+XlsxWriter~=3.2
