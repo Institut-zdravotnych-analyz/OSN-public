@@ -1,76 +1,100 @@
 """Useful constants for repositories OSN-public and OSN-private."""
 
+from .types import FrozenDict, FrozenList
 
 ### LOGGER
 
-LOG_COLOR_SCHEME = {
-    "DEBUG": "cyan",
-    "INFO": "green",
-    "WARNING": "yellow",
-    "ERROR": "red",
-    "CRITICAL": "white,bg_red",
-}
+LOG_COLOR_SCHEME = FrozenDict(
+    {
+        "DEBUG": "cyan",
+        "INFO": "green",
+        "WARNING": "yellow",
+        "ERROR": "red",
+        "CRITICAL": "white,bg_red",
+    }
+)
 
 LOG_FMT_FILE = "%(asctime)s %(levelname)8s -- %(message)s"
 LOG_FMT_CONSOLE = "%(log_color)s%(asctime)s %(levelname)8s -- %(reset)s%(white)s%(message)s"
 
 ### CONVERTERS
 
-INT_2_ROMAN = {1: "I", 2: "II", 3: "III", 4: "IV", 5: "V"}
-ROMAN_2_INT = {"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5}
+INT_2_ROMAN = FrozenDict({1: "I", 2: "II", 3: "III", 4: "IV", 5: "V"})
+ROMAN_2_INT = FrozenDict({"I": 1, "II": 2, "III": 3, "IV": 4, "V": 5})
 
 ### PRILOHY - USEFUL DATA
 
 FALLBACK_MS = "S99-99"
 
-POVINNOSTI_MS_COLS = [
-    "povinnost_ms_V",
-    "povinnost_ms_IV",
-    "povinnost_ms_III",
-    "povinnost_ms_II",
-    "povinnost_ms_I",
-]
+POVINNOSTI_MS_COLS = FrozenList(
+    [
+        "povinnost_ms_V",
+        "povinnost_ms_IV",
+        "povinnost_ms_III",
+        "povinnost_ms_II",
+        "povinnost_ms_I",
+    ]
+)
 
-POVINNOSTI_PROG_COLS = [
-    "povinnost_programu_V",
-    "povinnost_programu_IV",
-    "povinnost_programu_III",
-    "povinnost_programu_II",
-    "povinnost_programu_I",
-]
+POVINNOSTI_PROG_COLS = FrozenList(
+    [
+        "povinnost_programu_V",
+        "povinnost_programu_IV",
+        "povinnost_programu_III",
+        "povinnost_programu_II",
+        "povinnost_programu_I",
+    ]
+)
 
-UROVNE_MS_COLS = [
-    "uroven_ms_dospeli",
-    "uroven_ms_deti_0",
-    "uroven_ms_deti_1",
-    "uroven_ms_deti_7",
-    "uroven_ms_deti_16",
-]
+UROVNE_MS_COLS = FrozenList(
+    [
+        "uroven_ms_dospeli",
+        "uroven_ms_deti_0",
+        "uroven_ms_deti_1",
+        "uroven_ms_deti_7",
+        "uroven_ms_deti_16",
+    ]
+)
 
 # sposob urcenia mapped to Priloha where it could be found
-SPOSOB_2_PRILOHA = {
-    "D": ["p14", "p15"],
-    "DD": ["p10"],
-    "DRGD": ["p6"],
-    "M": ["p17"],
-    "MD": ["p9a"],
-    "MV": ["p7a", "p8a"],
-    "NOV": ["p5"],
-    "S": ["p16"],
-    "V": ["p12", "p13"],
-    "VD": ["p9"],
-    "VV": ["p7", "p8"],
-}
+SPOSOB_2_PRILOHA = FrozenDict(
+    {
+        "D": ["p14", "p15"],
+        "DD": ["p10"],
+        "DRGD": ["p6"],
+        "M": ["p17"],
+        "MD": ["p9a"],
+        "MV": ["p7a", "p8a"],
+        "NOV": ["p5"],
+        "S": ["p16"],
+        "V": ["p12", "p13"],
+        "VD": ["p9"],
+        "VV": ["p7", "p8"],
+    }
+)
 
-SPOSOBY_URCENIA_VALUES = sorted(SPOSOB_2_PRILOHA.keys())
+SPOSOBY_URCENIA_VALUES = FrozenList(sorted(SPOSOB_2_PRILOHA.keys()))
 
 
 ### PRILOHY XLSX
 class PrilohyXlsxMeta:
     """Metadata related to Prilohy documents 1 - 17"""
 
+    def __init__(self) -> None:
+        """Make all attributes frozen"""
+        for name, data in vars(self).items():
+            if name.startswith("P"):
+                setattr(self, name, FrozenDict(data))
+
     P1 = {
-        "columns": ["cislo_programu", "nazov_programu", "uroven_programu", *POVINNOSTI_PROG_COLS, "od", "do"],
+        "columns": [
+            "cislo_programu",
+            "nazov_programu",
+            "uroven_programu",
+            *POVINNOSTI_PROG_COLS,
+            "od",
+            "do",
+        ],
         "columns_full": [
             "Číslo programu",
             "Názov programu",
@@ -203,25 +227,36 @@ class PrilohyXlsxMeta:
                 "rows": [
                     "NOV - Označenie pre spôsob určenia medicínskej služby pre novorodenca, medicínska služba sa určí podľa skupiny klasifikačného systému alebo podľa skupiny klasifikačného systému a zdravotného výkonu alebo diagnózy podľa doplňujúceho kritéria podľa prílohy č. 5.",
                     "DRGD - Označenie pre spôsob určenia medicínskej služby, ak bol hospitalizačný prípad zaradený do skupiny podľa klasifikačného systému začínajúcej na písmeno „W‟, medicínska služba sa určí podľa skupiny klasifikačného systému, do ktorej bol hospitalizačný prípad zaradený, a diagnózy podľa prílohy č. 6.",
-                    "VV - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý v kombinácii hlavný zdravotný výkon a jeden alebo viac zdravotných výkonov zo zoznamu ďalších zdravotných výkonov podľa prílohy č. 7 alebo č. 8, sa medicínska služba určí podľa kombinácie hlavného zdravotného výkonu a vykázaného zdravotného výkonu alebo podľa hlavného zdravotného výkonu a vykázaných zdravotných výkonov podľa prílohy č. 7 alebo č. 8,",
+                    "VV - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý v kombinácii hlavný zdravotný výkon a jeden alebo viac zdravotných výkonov zo zoznamu ďalších zdravotných výkonov podľa prílohy č. 7 alebo č. 8, sa medicínska služba určí podľa kombinácie hlavného zdravotného výkonu a vykázaného zdravotného výkonu alebo podľa hlavného zdravotného výkonu a vykázaných zdravotných výkonov podľa prílohy č. 7 alebo č. 8",
                     "MV - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie vykázaný marker a minimálne jeden výkon zo zoznamu výkonov podľa prílohy č. 7a alebo č. 8a, medicínska služba sa určí podľa kombinácie markera a vykázaného zdravotného výkonu podľa prílohy č. 7a alebo č. 8a.",
                     "VD - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý zdravotný výkon pri vykázanej diagnóze, ktorý zodpovedá kombinácii zdravotného výkonu a diagnózy podľa prílohy č. 9, medicínska služba sa určí podľa kombinácie hlavného zdravotného výkonu a diagnózy podľa prílohy č. 9.",
-                    "MD - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý zdravotný výkon pri vykázaní markera, ktorý zodpovedá kombinácii zdravotného výkonu a markera podľa prílohy č. 9a, medicínska služba sa určí podľa kombinácie markera a diagnózy podľa prílohy č. 9a.",
+                    "MD - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie vykázaný marker pri vykázanej diagnóze, ktorý zodpovedá kombinácii markera a diagnózy podľa prílohy 9a, medicínska služba sa určí podľa kombinácie markera a diagnózy podľa prílohy č. 9a.",
                     "DD - Označenie pre spôsob určenia medicínskej služby, ak bola poistencovi počas hospitalizácie vykázaná kombinácia hlavnej a vedľajšej diagnózy, medicínska služba sa určí podľa kombinácie hlavnej diagnózy a diagnózy podľa prílohy č. 10.",
                     "V - Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č. 12 alebo č. 13, medicínska služba sa určí podľa prílohy č. 12 alebo č. 13.",
                     "D - Označenie pre spôsob určenia medicínskej služby, kedy sa medicínska služba pre poistencov určí podľa hlavnej diagnózy podľa prílohy č. 14 alebo 15; ak hlavná diagnóza pre hospitalizáciu nebola určená poskytovateľom zdravotnej starostlivosti, za hlavnú diagnózu sa považuje diagnóza pri prepustení.",
-                    "S - Označenie pre spôsob určenia medicínskej služby 'Identifikácia mŕtveho darcu orgánov' podľa prílohy č. 16,  ktorá sa môže vykonať spolu s medicínskymi službami určenými podľa spôsobu určenia podľa ostatných spôsobov určenia medicínskych služieb, medicínska služba sa určí podľa prílohy č. 16",
+                    "S - Označenie pre spôsob určenia medicínskej služby 'Identifikácia mŕtveho darcu orgánov' podľa prílohy č. 16,  ktorá sa môže vykonať spolu s medicínskymi službami určenými podľa spôsobu určenia podľa ostatných spôsobov určenia medicínskych služieb, medicínska služba sa určí podľa prílohy č. 16.",
                     "M - Spôsob určenia medicínskych služieb spadajúcich do programu č. 98 - v hospitalizačných prípadoch, v ktorých bol vykázaný marker zo zoznamu markerov v prílohe č. 17, medicínska služba sa určí podľa prílohy č. 17.",
                     "Medicínska služba S99-99 nemá spôsob určenia medicínskej služby, do tejto medicínskej služby budú zaradené hospitalizačné prípady, ktoré neboli zaradené podľa vyššie uvedených spôsobom určenia medicínskej služby",
                 ],
             },
             {
                 "title": "Povinnosť medicínskej služby:",
-                "subtitle": "Povinnosť medicínskej služby sa stanovuje pre najvyššiu úroveň povinného programu alebo najvyššiu úroveň prideleného doplnkového programu alebo najvyššiu úroveň nepovinného programu. V prípade, že je úroveň nemocnice vyššia ako úroveň programu, povinnosť sa stanovuje podľa úrovne nemocnice.",
+                "subtitle": "Povinnosť medicínskej služby sa stanovuje pre najvyššiu úroveň povinného programu alebo najvyššiu úroveň prideleného doplnkového programu alebo najvyššiu úroveň nepovinného programu. V prípade, že je úroveň nemocnice vyššia ako úroveň programu, povinnosť sa stanovuje podľa úrovne nemocnice.\n\nÚroveň pre posudzovanie povinnosti medicínskej služby sa určuje pre každú kombináciu programu a MS zvlášť, čo môže mať za následok to, že jedna medicínska služba bude v rámci jedného programu povinná a v rámci iného - zdieľaného programu bude nepovinná (ak je napríklad úroveň nemocnice 3, tak sa môže stať, že pod jedným programom, ktorý má úroveň 4 bude tá istá MS nepovinná a pod druhým - zdieľaným programom, ktorý má úroveň 2 bude povinná).V prípade ak sa stane popísaná situácia, teda že rovnakej medicínskej službe u jedného rovnakého poskytovateľa zdravotnej starostlivosti vychádza zároveň povinná a aj nepovinná rovnaká medicínska služba, táto medicínska služba je pre poskytovateľa povinná.",
             },
             {
                 "title": "Označenie medicínskej služby:",
-                "rows": ["1. P – povinná medicínska služba", "2. N – nepovinná medicínska služba"],
+                "rows": [
+                    "1. P – povinná medicínska služba",
+                    "2. N – nepovinná medicínska služba",
+                ],
+            },
+            {
+                "title": "Zlučovanie HP:",
+                "subtitle": "Medicínske služby sa určujú pre zlučované aj zlúčené hospitalizačné prípady samostatne. Medicínska služba na zlúčený hospitalizačný prípad sa vyberá z medicínskych služieb zlučovaných HP nasledujúcim prístupom:",
+                "rows": [
+                    "1. Medicínska služba zlučovaného HP je medicínska služba zo zlučovaných HP s najvyššou úrovňou.",
+                    "2. Ak je medicínskych služieb s rovnakou najvyššou úrovňou viac vyberá sa z nich tá medicínska služba, ktorá má menšie poradové číslo najskôr podľa čísla programu, ak je program totožný, tak podľa menšieho posledného dvojčíslia v kóde medicínskej služby.",
+                ],
             },
             {
                 "title": "Symboly pri minimálnych počtoch medicínskych služieb:",
@@ -343,8 +378,55 @@ class PrilohyXlsxMeta:
             "kod_ms",
             "nazov_ms",
         ],
+        "columns_full": [
+            "Kód výkonu",
+            "Názov zdravotného výkonu",
+            "Skupina diagnóz",
+            "Kód medicínskej služby",
+            "Názov medicínskej služby",
+        ],
+        "columns_3": [
+            "skupina_diagnoz",
+            "kod_hlavnej_diagnozy",
+            "nazov_hlavnej_diagnozy",
+        ],
+        "columns_full_3": [
+            "Skupina diagnóz",
+            "Kód hlavnej diagnózy",
+            "Názov hlavnej diagnózy",
+        ],
         "file": "09_Sposob urcenie medicinskej sluzby podla hlavneho vykonu a diagnozy_VD.xlsx",
+        "title_1": "Spôsob určenia medicínskej služby podľa výkonu a diagnózy - poistenec vo veku do 18 rokov",
+        "title_2": "Spôsob určenia medicínskej služby podľa výkonu a diagnózy - poistenec vo veku nad 18 rokov",
+        "title_3": "Skupiny diagnóz",
+        "subtitle_1": 'Ak bol poistencovi poskytnutý hlavný zdravotný výkon podľa stĺpca "názov zdravotného výkonu" pri hlavnej diagnóze zo skupiny diagnóz podľa stĺpca "Skupina diagnóz", hospitalizácii sa určí medicínska služba podľa stĺpca "Názov medicínskej služby" (VD).',
+        "subtitle_2": 'Ak bol poistencovi poskytnutý hlavný zdravotný výkon podľa stĺpca "názov zdravotného výkonu" pri hlavnej diagnóze zo skupiny diagnóz podľa stĺpca "Skupina diagnóz", hospitalizácii sa určí medicínska služba podľa stĺpca "Názov medicínskej služby" (VD).',
+        "subtitle_3": 'Diagnóza patrí do skupiny diagnóz podľa stĺpca "skupina diagnóz", ak bola vykázaná ako hlavná diagnóza a jej definícia zodpovedá definícii podľa stĺpca "kód hlavnej diagnózy" v nasledujúcej tabuľke. Diagnóza spĺňa definíciu podľa stĺpca "Kód hlavnej diagnózy", pokiaľ je jej kód zhodný s koncovým kódom diagnózy v stĺpci "Kód hlavnej diagnózy" alebo patrí do kategórie diagnóz určenej kategoriálnym kódom v stĺpci "Kód hlavnej diagnózy". Kategoriálne kódy sú všetky, ktoré obsahujú znak pomlčka "-". Diagnóza patrí do kategórie diagnóz určenej kategoriálnym kódom, pokiaľ jej kód začína rovnako, ako kategoriálny kód bez znaku pomlčka "-":',
+        "section_1": "Pre poistencov vo veku do 18 rokov:",
+        "section_2": "Pre poistencov vo veku nad 18 rokov:",
         "index": "9",
+        "vysvetlivky": [
+            {
+                "title": "Vysvetlivky skratiek:",
+                "rows": [
+                    "CML - chronická myeloidná leukémia",
+                    "CNS - centrálna nervová sústava",
+                    "DM - diabetes mellitus",
+                    "GIT - gastrointestinálny trakt",
+                    "MDS - myelodysplastický syndróm",
+                    "MPN - myeloproliferatívne neoplázie",
+                    "NHL - non Hodgkinov lymfóm",
+                    "Ph negatívne MP - Ph-negatívne myeloproliferatívne neoplázie",
+                ],
+            },
+            {
+                "title": "Vysvetlivky:",
+                "rows": [
+                    "VD - Označenie pre spôsob určenia medicínskej služby, ak bol poistencovi počas hospitalizácie poskytnutý zdravotný výkon pri vykázanej diagnóze, ktorý zodpovedá kombinácii zdravotného výkonu a diagnózy podľa prílohy 9, medicínska služba sa určí podľa kombinácie hlavného zdravotného výkonu a diagnózy podľa prílohy č. 9.",
+                    "Ak nie je špecifické, ktorú jednu výslednú medicínsku službu, podľa tejto prílohy vyhlášky určiť, určuje sa medicínska služba podľa poradia riadkov vyhlášky, t.j. od prvej určenej medicínskej služby vo vyhláške po poslednú určenú medicínsku službu vo vyhláške.",
+                ],
+            },
+        ],
     }
 
     P9a = {
@@ -464,6 +546,7 @@ class PrilohyXlsxMeta:
                 "title": "Vysvetlivky:",
                 "rows": [
                     "V - Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.13 alebo č. 14, medicínska služba sa určí podľa prílohy č. 13 alebo č. 14.",
+                    "Ak nie je špecifické, ktorú jednu výslednú medicínsku službu, podľa tejto prílohy vyhlášky určiť, určuje sa medicínska služba podľa poradia riadkov vyhlášky, t.j. od prvého určeného výkonu vo vyhláške po posledný určený výkon vo vyhláške.",
                 ],
             },
         ],
@@ -562,6 +645,7 @@ class PrilohyXlsxMeta:
                 "title": "Vysvetlivky:",
                 "rows": [
                     "D - Označenie pre spôsob určenia medicínskej služby, kedy sa medicínska služba pre poistencov určí podľa hlavnej diagnózy podľa prílohy č. 14 alebo č. 15; ak hlavná diagnóza pre hospitalizáciu nebola určená poskytovateľom zdravotnej starostlivosti, za hlavnú diagnózu sa považuje diagnóza pri prepustení.",
+                    "Ak nie je špecifické, ktorú jednu výslednú medicínsku službu, podľa tejto prílohy vyhlášky určiť, určuje sa medicínska služba podľa poradia riadkov vyhlášky, t. j. od prvej určenej diagnózy vo vyhláške po poslednú určenú diagnózu vo vyhláške.",
                 ],
             },
         ],
@@ -592,27 +676,27 @@ class PrilohyXlsxMeta:
 class PrilohyXlsxFormats:
     """Metadata related to generated XLSX files"""
 
-    DEFAULT_FONT = {"font_name": "Times New Roman", "font_size": 12}
-    BOLD_FONT = {"font_name": "Times New Roman", "font_size": 12, "bold": True}
-    ITALIC_FONT = {"font_name": "Times New Roman", "font_size": 12, "italic": True}
-    BIGGER_BOLD_FONT = {"font_name": "Times New Roman", "font_size": 14, "bold": True}
-    RIGHT_ALIGN = {"align": "right"}
-    CENTER_ALIGN = {"align": "center"}
-    TEXT_WRAP = {"text_wrap": True}
-    LIGHT_BLUE_BG = {"bg_color": "DDEBF7"}
-    GREY_BG = {"bg_color": "D0CECE"}
-    LIGHT_GREEN_BG = {"bg_color": "C4E59F"}
-    LIGHT_RED_BG = {"bg_color": "FFBFBF"}
-    LIGHT_YELLOW_BG = {"bg_color": "FFFBC2"}
-    LIGHT_ORANGE_BG = {"bg_color": "FFE1C9"}
-    BLUE_BG = {"bg_color": "CAD4E8"}
-    UROVEN_I_BG = {"bg_color": "63be7b"}
-    UROVEN_II_BG = {"bg_color": "b1d47f"}
-    UROVEN_III_BG = {"bg_color": "ffeb84"}
-    UROVEN_IV_BG = {"bg_color": "fcaa78"}
-    UROVEN_V_BG = {"bg_color": "f8696b"}
-    THIN_BOTTOM_BORDER = {"bottom": 1}
-    THICK_BOTTOM_BORDER = {"bottom": 2}
-    RIGHT_ROTATION = {"rotation": 90}
-    SUPERSCRIPT = {"font_script": 1}
-    STRIKEOUT = {"font_strikeout": True}
+    DEFAULT_FONT = FrozenDict({"font_name": "Times New Roman", "font_size": 12})
+    BOLD_FONT = FrozenDict({"font_name": "Times New Roman", "font_size": 12, "bold": True})
+    ITALIC_FONT = FrozenDict({"font_name": "Times New Roman", "font_size": 12, "italic": True})
+    BIGGER_BOLD_FONT = FrozenDict({"font_name": "Times New Roman", "font_size": 14, "bold": True})
+    RIGHT_ALIGN = FrozenDict({"align": "right"})
+    CENTER_ALIGN = FrozenDict({"align": "center"})
+    TEXT_WRAP = FrozenDict({"text_wrap": True})
+    LIGHT_BLUE_BG = FrozenDict({"bg_color": "DDEBF7"})
+    GREY_BG = FrozenDict({"bg_color": "D0CECE"})
+    LIGHT_GREEN_BG = FrozenDict({"bg_color": "C4E59F"})
+    LIGHT_RED_BG = FrozenDict({"bg_color": "FFBFBF"})
+    LIGHT_YELLOW_BG = FrozenDict({"bg_color": "FFFBC2"})
+    LIGHT_ORANGE_BG = FrozenDict({"bg_color": "FFE1C9"})
+    BLUE_BG = FrozenDict({"bg_color": "CAD4E8"})
+    UROVEN_I_BG = FrozenDict({"bg_color": "63be7b"})
+    UROVEN_II_BG = FrozenDict({"bg_color": "b1d47f"})
+    UROVEN_III_BG = FrozenDict({"bg_color": "ffeb84"})
+    UROVEN_IV_BG = FrozenDict({"bg_color": "fcaa78"})
+    UROVEN_V_BG = FrozenDict({"bg_color": "f8696b"})
+    THIN_BOTTOM_BORDER = FrozenDict({"bottom": 1})
+    THICK_BOTTOM_BORDER = FrozenDict({"bottom": 2})
+    RIGHT_ROTATION = FrozenDict({"rotation": 90})
+    SUPERSCRIPT = FrozenDict({"font_script": 1})
+    STRIKEOUT = FrozenDict({"font_strikeout": True})
