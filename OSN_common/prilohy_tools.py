@@ -152,18 +152,20 @@ def load_priloha_7(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     """Load data from XLSX file of Príloha 7"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P7["columns"])
 
-    # remove header, footer and section names
-    df = filter_valid_kod_ms(df)
-    df = strip_df(df)
+    # find splitting line
+    idx_split = df.index[df.kod_vykonu.fillna("-").str.contains("Potrebné nakódovať")][0]
 
-    df_hv = (
-        df[df.nazov_ms.notna()]
-        .reset_index(drop=True)
-        .rename(columns={"kod_vykonu": "kod_hlavneho_vykonu", "nazov_vykonu": "nazov_hlavneho_vykonu"})
-    )
+    df_hv = df.loc[:idx_split].copy()
+    df_vv = df.loc[idx_split:].copy()
 
-    df_vv = df[df.nazov_ms.isna()].reset_index(drop=True)
-    df_vv["nazov_ms"] = df_hv["nazov_ms"].values[0]
+    # hlavne vykony
+    df_hv = filter_valid_kod_ms(df_hv)
+    df_hv = strip_df(df_hv)
+    df_hv = df_hv.rename(columns={"kod_vykonu": "kod_hlavneho_vykonu", "nazov_vykonu": "nazov_hlavneho_vykonu"})
+
+    # vedlajsie vykony
+    df_vv = filter_valid_kod_ms(df_vv)
+    df_vv = strip_df(df_vv)
 
     logger.debug(f"Loaded rows of XLSX Príloha 7 (HV + VV) deti: {len(df_hv)} + {len(df_vv)}")
     return df_hv, df_vv
@@ -190,17 +192,20 @@ def load_priloha_8(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     """Load data from XLSX file of Príloha 8"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P8["columns"])
 
-    # remove header, footer and section names
-    df = filter_valid_kod_ms(df)
-    df = strip_df(df)
+    # find splitting line
+    idx_split = df.index[df.kod_vykonu.fillna("-").str.contains("Potrebné nakódovať")][0]
 
-    df_hv = (
-        df[df.nazov_ms.notna()]
-        .reset_index(drop=True)
-        .rename(columns={"kod_vykonu": "kod_hlavneho_vykonu", "nazov_vykonu": "nazov_hlavneho_vykonu"})
-    )
-    df_vv = df[df.nazov_ms.isna()].reset_index(drop=True)
-    df_vv["nazov_ms"] = df_hv["nazov_ms"].values[0]
+    df_hv = df.loc[:idx_split].copy()
+    df_vv = df.loc[idx_split:].copy()
+
+    # hlavne vykony
+    df_hv = filter_valid_kod_ms(df_hv)
+    df_hv = strip_df(df_hv)
+    df_hv = df_hv.rename(columns={"kod_vykonu": "kod_hlavneho_vykonu", "nazov_vykonu": "nazov_hlavneho_vykonu"})
+
+    # vedlajsie vykony
+    df_vv = filter_valid_kod_ms(df_vv)
+    df_vv = strip_df(df_vv)
 
     logger.debug(f"Loaded rows of XLSX Príloha 8 (HV + VV) dospeli: {len(df_hv)} + {len(df_vv)}")
     return df_hv, df_vv
@@ -293,13 +298,13 @@ def load_priloha_10(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFr
     df_deti = df_vd.loc[1:]
 
     # hlavna diagnoza
-    df_hd = df[~df["kod_hlavnej_diagnozy"].isin(diags_vd)].reset_index(drop=True)
-    df_hd["kod_hlavnej_diagnozy"] = df_hd["kod_hlavnej_diagnozy"].apply(standardize_text)
-    df_hd = df_hd.drop(columns=["kod_ms", "nazov_ms"])
+    df_diags = df[~df["kod_hlavnej_diagnozy"].isin(diags_vd)].reset_index(drop=True)
+    df_diags["kod_hlavnej_diagnozy"] = df_diags["kod_hlavnej_diagnozy"].apply(standardize_text)
+    df_diags = df_diags.drop(columns=["kod_ms", "nazov_ms"])
 
-    msg_counts = f"{len(df_dospeli)} + {len(df_deti)} + {len(df_hd)}"
+    msg_counts = f"{len(df_dospeli)} + {len(df_deti)} + {len(df_diags)}"
     logger.debug(f"Loaded rows of XLSX Príloha 10 (VD dospeli + VD deti + HD): {msg_counts}")
-    return df_dospeli, df_deti, df_hd
+    return df_dospeli, df_deti, df_diags
 
 
 def load_priloha_11(xlsx_path: str | Path) -> None:  # noqa: D103
