@@ -16,7 +16,7 @@ target-version = "py311"
 select = ["ALL"]
 
 # ignore specific rules - check more on https://docs.astral.sh/ruff/rules/<code>
-ignore = ["D205", "D400", "D401", "D415", "EM101", "EM102", "FIX002", "G004", "PD011", "PD901", "PLR0911", "PLR2004", "RUF001", "RUF012", "TD002", "TD003", "TRY003"]
+ignore = ["COM812", "D205", "D400", "D401", "D415", "EM101", "EM102", "FIX002", "G004", "PD011", "PD901", "PLR0911", "PLR2004", "PLW2901", "RUF001", "RUF012", "TD002", "TD003", "TRY003"]
 
 # disable on-save auto-removal of unused imports
 unfixable = ["F401"]
