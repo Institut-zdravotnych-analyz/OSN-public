@@ -1,7 +1,8 @@
-black==25.1.0
-colorlog==6.9.0
-numpy==2.2.2
-openpyxl==3.1.5
-pandas>=2.2
-tqdm>=4.67
-XlsxWriter==3.2.2
+colorlog~=6.9
+frozendict~=2.4
+frozenlist~=1.5
+openpyxl~=3.1
+pandas~=2.2
+ruff~=0.11
+tqdm~=4.67
+XlsxWriter~=3.2
