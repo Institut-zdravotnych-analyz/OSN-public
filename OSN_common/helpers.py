@@ -42,9 +42,9 @@ def check_path_existence(paths: Iterable[Path]) -> None:
     logger.debug("✅ All paths exist")
 
 
-def collapse_diags(diags: list[str], diags_dct: pd.DataFrame) -> list[str]:
+def collapse_diags(diags: list[str], diags_dct: dict[str, list[str]]) -> list[str]:
     """Collapses a list of terminal diagnosis codes to their highest common group.
-    'diagnozy_df' is the raw form 'zoznam diagnoz' as it is returned by load_zoznam_diagnoz()
+    `diags_dct` represents mapping of 'skupina_diagnoz' to 'koncove_diagnozy'.
 
     Examples:
     ['d06-']                                                    ->      ['d06-']
@@ -74,9 +74,9 @@ def drop_duplicates(df: DataFrame, keep: str = "last") -> DataFrame:
     return df
 
 
-def expand_diags(diags: str | list[str], diags_dct: pd.DataFrame) -> list[str]:
+def expand_diags(diags: str | list[str], diags_dct: dict[str, list[str]]) -> list[str]:
     """Expands a a list of diagnosis codes to their terminal values codes
-    'diagnozy_df' is the raw form 'zoznam diagnoz' as it is returned by load_zoznam_diagnoz()
+    `diags_dct` represents mapping of 'skupina_diagnoz' to 'koncove_diagnozy'.
 
     Examples:
     'd060'              ->      ['d060']
