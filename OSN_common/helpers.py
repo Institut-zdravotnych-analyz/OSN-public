@@ -11,10 +11,10 @@ from pandas import DataFrame, Series
 
 from OSN_common.logger import logger
 
-from .types import NA
+from .types import NAType
 
 
-def categorize_age(age: int | NA) -> str | NA:
+def categorize_age(age: int | NAType) -> str | NAType:
     """Categorize age into age groups"""
     if pd.isna(age):
         return pd.NA
@@ -89,13 +89,13 @@ def expand_diags(diags: str | list[str], diags_dct: pd.DataFrame) -> list[str]:
     if isinstance(diags, str):
         diags = [diags]
 
-    diags_out = []
+    diags_out = set()
     for d in diags:
         d = d.strip().lower()
         diags_add = diags_dct.get(d, [d])
-        diags_out.extend(diags_add)
+        diags_out = diags_out.union(set(diags_add))
 
-    return sorted(set(diags_out))
+    return sorted(diags_out)
 
 
 def fillna_empty_list(s: Series) -> Series:

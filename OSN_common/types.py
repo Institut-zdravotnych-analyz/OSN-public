@@ -5,9 +5,7 @@ from typing import Any
 
 import frozendict as fd
 import frozenlist as fl
-from pandas._libs.missing import NAType
-
-NA = NAType
+from pandas._libs.missing import NAType  # noqa: F401
 
 
 class FrozenList(fl.FrozenList):

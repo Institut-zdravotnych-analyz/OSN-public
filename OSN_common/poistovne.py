@@ -1,5 +1,6 @@
-"""TODO: Move to JSON"""
+"""Temporary file"""
 
+# TODO: Transform it to JSON
 from collections import defaultdict
 
 POISTOVNE = {
