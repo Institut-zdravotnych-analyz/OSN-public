@@ -45,6 +45,7 @@ def check_path_existence(paths: Iterable[Path]) -> None:
 def collapse_diags(diags: list[str], diags_dct: dict[str, list[str]]) -> list[str]:
     """Collapses a list of terminal diagnosis codes to their highest common group.
     `diags_dct` represents mapping of 'skupina_diagnoz' to 'koncove_diagnozy'.
+    This dictionary has to be sorted!
 
     Examples:
     ['d06-']                                                    ->      ['d06-']
