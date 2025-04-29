@@ -372,7 +372,7 @@ POISTOVNE = {
                         {
                             "usecols": [0, 1, 2],
                             "names": ["pzs_6", "typ_starostlivosti", "pocet"],
-                            "dtype": ["str", "str", "float"],
+                            "dtype": defaultdict(lambda: "str", pocet="float"),
                         },
                     ],
                 },
@@ -763,7 +763,7 @@ POISTIVNE_ARGS = {
         "usecols": [0, 1, 2, 3],
         "names": ["kod_zp", "pzs_6", "typ_starostlivosti", "pocet"],
         "header": 0,
-        "dtype": ["Int8", "str", "str", "Int32"],
+        "dtype": defaultdict(lambda: "str", kod_zp="Int8", pocet="Int32"),
         "delimiter": "|",
     },
 }

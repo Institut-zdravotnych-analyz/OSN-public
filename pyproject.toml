@@ -1,12 +1,25 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
 [project]
 name = "OSN_common"
-version = "0.1.0"
+version = "2025.1"
 description = "Common scripts and functions for Slovak hospital reform OSN"
 requires-python = ">=3.11"
+dependencies = [
+    "colorlog~=6.9",
+    "frozendict~=2.4",
+    "frozenlist~=1.5",
+    "openpyxl~=3.1",
+    "pandas~=2.2",
+    "ruff~=0.11",
+    "tqdm~=4.67",
+    "XlsxWriter~=3.2",
+]
 
-[build-system]
-build-backend = "flit_core.buildapi"
-requires = ["flit_core >=3.2,<4"]
+[tool.hatch.build]
+packages = ["OSN_common"]
 
 [tool.ruff]
 line-length = 120
