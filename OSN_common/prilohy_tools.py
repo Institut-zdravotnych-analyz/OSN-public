@@ -4,32 +4,31 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-from pandas import DataFrame
 from xlsxwriter.workbook import Workbook
 
 import OSN_common.constants as c
 from OSN_common.helpers import standardize_text, strip_df
 from OSN_common.logger import logger
 
-PRILOHY = c.PrilohyXlsxMeta
+PRILOHY = c.PrilohyXlsxMeta()
 P_FMT = c.PrilohyXlsxFormats
 
 
-def filter_valid_kod_ms(df: DataFrame, col_kod_ms: str = "kod_ms") -> DataFrame:
+def filter_valid_kod_ms(df: pd.DataFrame, col_kod_ms: str = "kod_ms") -> pd.DataFrame:
     """Keep rows where MS follows pattern SXX-XX where XX belongs to interval (00-99)"""
     df[col_kod_ms] = df[col_kod_ms].astype(str).str.strip()
     mask = df[col_kod_ms].str.fullmatch("S[0-9]{2}-[0-9]{2}")
     return df[mask].reset_index(drop=True)
 
 
-def filter_valid_diagnoses(df: DataFrame, col_kod_diag: str = "kod_diagnozy") -> DataFrame:
+def filter_valid_diagnoses(df: pd.DataFrame, col_kod_diag: str = "kod_diagnozy") -> pd.DataFrame:
     """Keep rows where Diag code follows YX where Y is a single letter and X is from interval (00-9999)"""
     df[col_kod_diag] = df[col_kod_diag].astype(str).str.strip()
     mask = df[col_kod_diag].str.fullmatch("^[A-Za-z][0-9]{2,4}")
     return df[mask].reset_index(drop=True)
 
 
-def load_priloha_1(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_1(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 1"""
     df = pd.read_excel(xlsx_path, usecols="A:J", names=PRILOHY.P1["columns"])
 
@@ -55,7 +54,7 @@ def load_priloha_1(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_2(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_2(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 2"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P2["columns"])
 
@@ -85,15 +84,15 @@ def load_priloha_2(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_3(xlsx_path: str | Path) -> DataFrame:  # noqa: D103
+def load_priloha_3(xlsx_path: str | Path) -> pd.DataFrame:  # noqa: D103
     raise NotImplementedError("Cannot load since Príloha 3 is a full-text DOCX document.")
 
 
-def load_priloha_4(xlsx_path: str | Path) -> DataFrame:  # noqa: D103
+def load_priloha_4(xlsx_path: str | Path) -> pd.DataFrame:  # noqa: D103
     raise NotImplementedError("Cannot load since Príloha 4 is a full-text DOCX document.")
 
 
-def load_priloha_5(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
+def load_priloha_5(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 5"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P5["columns"])
 
@@ -102,37 +101,11 @@ def load_priloha_5(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     df_ms = strip_df(df_ms)
     df_ms["drg"] = df_ms["drg"].replace('Akákoľvek skupina klasifikačného systému začínajúca na "P"', "P")
 
-    # TODO: change from hard-coded to exact or move to constants
-    df_crit = pd.DataFrame(
-        data={
-            "kod": ["8p107", "8p133", "8q902", "Z515", "8r2637", "93083", "mOSNnovo"],
-            "typ_kodu": ["vykon", "vykon", "vykon", "diagnoza", "vykon", "vykon", "marker"],
-            "nazov": [
-                "Vysokofrekvenčná ventilácia",
-                "Inhalačná aplikácia oxidu dusnatého",
-                "Aktívne kontrolované chladenie po resuscitácii, terapeutická hypotermia",
-                "Paliatívna starostlivosť",
-                "Výmenná transfúzia u novorodencov",
-                "Akútny pôrod novorodenca v prípade ohrozenia života",
-                "Nemožnosť transportu novorodenca z medicínskych príčin na vyššie pracovisko",
-            ],
-            "kriterium": [
-                "Nekonvenčná UPV (vysokofrekvenčná, NO ventilácia)",
-                "Nekonvenčná UPV (vysokofrekvenčná, NO ventilácia)",
-                "Riadená hypotermia",
-                "Paliatívna starostlivosť u novorodencov",
-                "Potreba výmennej transfúzie",
-                "Akútny pôrod novorodenca v prípade ohrozenia života bez ohľadu na gestačný vek a hmotnosť",
-                "Marker - nemožnosť transportu novorodenca z medicínskych príčin na vyššie pracovisko",
-            ],
-        },
-    )
-
-    logger.debug(f"Loaded rows of XLSX Príloha 5 (MS + criteria): {len(df_ms)} + {len(df_crit)}")
-    return df_ms, df_crit
+    logger.debug(f"Loaded rows of XLSX Príloha 5 (MS + criteria): {len(df_ms)}")
+    return df_ms
 
 
-def load_priloha_6(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
+def load_priloha_6(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 6"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P6["columns"])
 
@@ -148,7 +121,7 @@ def load_priloha_6(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     return df_dospeli, df_deti
 
 
-def load_priloha_7(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
+def load_priloha_7(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 7"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P7["columns"])
 
@@ -161,7 +134,12 @@ def load_priloha_7(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     # hlavne vykony
     df_hv = filter_valid_kod_ms(df_hv)
     df_hv = strip_df(df_hv)
-    df_hv = df_hv.rename(columns={"kod_vykonu": "kod_hlavneho_vykonu", "nazov_vykonu": "nazov_hlavneho_vykonu"})
+    df_hv = df_hv.rename(
+        columns={
+            "kod_vykonu": "kod_hlavneho_vykonu",
+            "nazov_vykonu": "nazov_hlavneho_vykonu",
+        }
+    )
 
     # vedlajsie vykony
     df_vv = filter_valid_kod_ms(df_vv)
@@ -171,7 +149,7 @@ def load_priloha_7(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     return df_hv, df_vv
 
 
-def load_priloha_7a(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
+def load_priloha_7a(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 7a"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P7a["columns"])
 
@@ -188,7 +166,7 @@ def load_priloha_7a(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     return df, markers
 
 
-def load_priloha_8(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
+def load_priloha_8(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 8"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P8["columns"])
 
@@ -201,7 +179,12 @@ def load_priloha_8(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     # hlavne vykony
     df_hv = filter_valid_kod_ms(df_hv)
     df_hv = strip_df(df_hv)
-    df_hv = df_hv.rename(columns={"kod_vykonu": "kod_hlavneho_vykonu", "nazov_vykonu": "nazov_hlavneho_vykonu"})
+    df_hv = df_hv.rename(
+        columns={
+            "kod_vykonu": "kod_hlavneho_vykonu",
+            "nazov_vykonu": "nazov_hlavneho_vykonu",
+        }
+    )
 
     # vedlajsie vykony
     df_vv = filter_valid_kod_ms(df_vv)
@@ -211,7 +194,7 @@ def load_priloha_8(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     return df_hv, df_vv
 
 
-def load_priloha_8a(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
+def load_priloha_8a(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 8a"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P8a["columns"])
 
@@ -228,7 +211,9 @@ def load_priloha_8a(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame]:
     return df, markers
 
 
-def load_priloha_9(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFrame]:
+def load_priloha_9(
+    xlsx_path: str | Path,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 9
     Warning: Relies on the order of rows in the XLSX file.
     """
@@ -250,7 +235,11 @@ def load_priloha_9(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFra
     df_diags = df.iloc[first_diag_idx:].reset_index(drop=True)
     df_diags = df_diags.drop(["kod_hlavneho_vykonu", "nazov_hlavneho_vykonu"], axis=1)
     df_diags = df_diags.rename(
-        columns={"drg": "skupina_diagnoz", "kod_ms": "kod_hlavnej_diagnozy", "nazov_ms": "nazov_hlavnej_diagnozy"},
+        columns={
+            "drg": "skupina_diagnoz",
+            "kod_ms": "kod_hlavnej_diagnozy",
+            "nazov_ms": "nazov_hlavnej_diagnozy",
+        },
     )
     logger.debug(
         f"Loaded rows of Príloha 9 (HV dospeli + HV deti + VD): {len(df_dospeli)} + {len(df_deti)} + {len(df_diags)}",
@@ -259,7 +248,7 @@ def load_priloha_9(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFra
     return df_dospeli, df_deti, df_diags
 
 
-def load_priloha_9a(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_9a(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 9a
     Warning: Relies on the order of rows in the XLSX file.
     """
@@ -284,7 +273,9 @@ def load_priloha_9a(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_10(xlsx_path: str | Path) -> tuple[DataFrame, DataFrame, DataFrame]:
+def load_priloha_10(
+    xlsx_path: str | Path,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Load data from XLSX file of Príloha 10"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P10["columns"], dtype=str)
     df = df.dropna(subset="kod_hlavnej_diagnozy")
@@ -311,7 +302,7 @@ def load_priloha_11(xlsx_path: str | Path) -> None:  # noqa: D103
     raise NotImplementedError("Cannot load since Príloha 11 does not exist")
 
 
-def load_priloha_12(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_12(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 12"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P12["columns"], dtype=str)
     df = filter_valid_kod_ms(df)
@@ -321,7 +312,7 @@ def load_priloha_12(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_13(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_13(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 13"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P13["columns"], dtype=str)
     df = filter_valid_kod_ms(df)
@@ -331,7 +322,7 @@ def load_priloha_13(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_14(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_14(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 14"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P14["columns"], dtype=str)
     df = filter_valid_kod_ms(df)
@@ -342,7 +333,7 @@ def load_priloha_14(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_15(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_15(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 15"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P15["columns"], dtype=str)
     df = filter_valid_kod_ms(df)
@@ -353,7 +344,7 @@ def load_priloha_15(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_16(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_16(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 16"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P16["columns"], dtype=str)
     df = df.dropna(subset="kod_diagnozy")
@@ -365,7 +356,7 @@ def load_priloha_16(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def load_priloha_17(xlsx_path: str | Path) -> DataFrame:
+def load_priloha_17(xlsx_path: str | Path) -> pd.DataFrame:
     """Load data from XLSX file of Príloha 17"""
     df = pd.read_excel(xlsx_path, names=PRILOHY.P17["columns"], dtype=str)
     df = filter_valid_kod_ms(df)
@@ -375,7 +366,7 @@ def load_priloha_17(xlsx_path: str | Path) -> DataFrame:
     return df
 
 
-def sort_priloha_2(df: DataFrame) -> DataFrame:
+def sort_priloha_2(df: pd.DataFrame) -> pd.DataFrame:
     """Sorting logic for P2"""
     columns_order = [
         "cislo_programu",
@@ -395,7 +386,7 @@ def sort_priloha_2(df: DataFrame) -> DataFrame:
     return df.drop("max_uroven", axis=1)
 
 
-def sort_priloha_12_13(df: DataFrame, ordered_programs: list[int], p2: DataFrame) -> DataFrame:
+def sort_priloha_12_13(df: pd.DataFrame, ordered_programs: list[int], p2: pd.DataFrame) -> pd.DataFrame:
     """Sorting logic for P12 & P13"""
     # preprocess p2
     cols = ["kod_ms", "cislo_programu", *c.UROVNE_MS_COLS]
