@@ -1,4 +1,4 @@
-from OSN_common.constants import POISTIVNE_ARGS, POISTOVNE
+from OSN_common.constants import POISTIVNE_ARGS, POISTIVNE_ARGS_2024, POISTOVNE
 from collections import defaultdict
 
 import pandas as pd
@@ -6,6 +6,7 @@ import pandas as pd
 
 def load_data_zp(data_folder_path, rok, zoznam_zp):
     data = {}
+    metadata = POISTIVNE_ARGS_2024 if rok == "2024" else POISTIVNE_ARGS
     for kod in zoznam_zp:
         print(f'Nacitavam data pre poistovnu {POISTOVNE[kod]["nazov"]}')
 
@@ -19,7 +20,7 @@ def load_data_zp(data_folder_path, rok, zoznam_zp):
             for _i in range(len(data_structure["nazvy_suborov"])):
 
                 nazov_suboru = data_structure["nazvy_suborov"][_i]
-                argumenty = POISTIVNE_ARGS[data_name] | data_structure["argumenty"][_i]
+                argumenty = metadata[data_name] | data_structure["argumenty"][_i]
 
                 print(f"Nacitavam data zo suboru {nazov_suboru}")
                 df = pd.read_csv(datove_subory / nazov_suboru, **argumenty)
