@@ -257,7 +257,7 @@ def load_priloha_9a(xlsx_path: str | Path) -> pd.DataFrame:
     kod_markera, hodnota_markera, _, kod_ms, nazov_ms = df_markera.loc[0].values
 
     # diagnozy
-    df = df.dropna(subset="kod_hlavnej_diagnozy").reset_index(drop=True)
+    df = df.dropna(subset="skupina_diagnoz").reset_index(drop=True)
     # TODO: make this more robust (don't rely on the order of rows)
     first_diag = "f431"
     first_diag_idx = df["kod_hlavnej_diagnozy"][df["kod_hlavnej_diagnozy"] == first_diag].index[0]
@@ -284,7 +284,10 @@ def load_priloha_10(
 
     # vedlajsia diagnoza
     df_vd = filter_valid_kod_ms(df)
-    diags_vd = set(df_vd["kod_hlavnej_diagnozy"])
+    df_vd = df_vd.rename(
+        columns={"kod_hlavnej_diagnozy": "kod_vedlajsej_diagnozy", "nazov_hlavnej_diagnozy": "nazov_vedlajsej_diagnozy"}
+    )
+    diags_vd = set(df_vd["kod_vedlajsej_diagnozy"])
     df_dospeli = df_vd.head(1)
     df_deti = df_vd.loc[1:]
 
