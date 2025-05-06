@@ -545,7 +545,7 @@ class PrilohyXlsxMeta:
             {
                 "title": "Vysvetlivky:",
                 "rows": [
-                    "V - Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.13 alebo č. 14, medicínska služba sa určí podľa prílohy č. 13 alebo č. 14.",
+                    "V - Označenie pre spôsob určenia medicínskej služby, kedy bol poistencovi počas hospitalizácie poskytnutý hlavný zdravotný výkon zo zoznamu v prílohe č.12 alebo č. 13, medicínska služba sa určí podľa prílohy č. 12 alebo č. 13.",
                     "Ak nie je špecifické, ktorú jednu výslednú medicínsku službu, podľa tejto prílohy vyhlášky určiť, určuje sa medicínska služba podľa poradia riadkov vyhlášky, t.j. od prvého určeného výkonu vo vyhláške po posledný určený výkon vo vyhláške.",
                 ],
             },
@@ -662,14 +662,26 @@ class PrilohyXlsxMeta:
 
     P16 = {
         "columns": ["kod_diagnozy", "nazov_diagnozy"],
+        "description": 'Medicínska služba "Identifikácia mŕtveho darcu orgánov" sa určí, ak je pri hospitalizačnom prípade vykázaná aspoň jedna diagnóza zo skupiny diagnóz "Kóma" a súčasne aspoň jedna diagnóza zo skupiny "Opuch mozgu" a súčasne aspoň jedna z diagnóz zo skupiny "Vybrané pochorenia mozgu" (S).',
         "file": "16_Sposob urcenia medicinskej sluzby podla specialnych pravidiel_S.xlsx",
         "index": "16",
+        "title": "Spôsob určenia medicínskej služby podľa špeciálnych pravidiel",
+        "vysvetlivky": {
+            "title": "Vysvetlivky",
+            "subtitle": "S - Označenie pre spôsob určenia medicínskej služby 'Identifikácia mŕtveho darcu orgánov' podľa prílohy č. 16,  ktorá sa môže vykonať spolu s medicínskymi službami určenými podľa spôsobu určenia podľa ostatných spôsobov určenia medicínskych služieb, medicínska služba sa určí podľa prílohy č. 16. Ak je možné hospitalizačný prípad zaradiť podľa prílohy č. 16, vykazuje sa medicínska služba určená prílohou č. 16.",
+        },
     }
 
     P17 = {
         "columns": ["kod_markera", "nazov_markera", "kod_ms", "nazov_ms"],
+        "description": 'V hospitalizačných prípadoch, v ktorých bol vykázaný marker podľa stĺpca "Kód markera", s hodnotou markera podľa stĺpca "Hodnota markera", hospitalizácii sa určí medicínska služby podľa stĺpca "Medicínska služba".',
         "file": "17_Sposob urcenia medicinskej sluzby pre program 98.xlsx",
         "index": "17",
+        "title": "Spôsob určenia medicínskej služby podľa markera",
+        "vysvetlivky": {
+            "title": "Vysvetlivky",
+            "subtitle": "Ak nie je špecifické, ktorú jednu výslednú medicínsku službu, podľa tejto prílohy vyhlášky určiť, určuje sa medicínska služba podľa poradia riadkov vyhlášky, t. j. od prvej určenej diagnózy vo vyhláške po poslednú určenú diagnózu vo vyhláške.",
+        },
     }
 
 
