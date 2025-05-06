@@ -158,7 +158,7 @@ def load_priloha_7a(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     df = strip_df(df)
 
     markers = df[df.kod_vykonu.str.startswith("m")].copy().drop("nazov_ms", axis=1).reset_index(drop=True)
-    markers.columns = ["kod_markera", "nazov_markera", "kod_ms"]
+    markers.columns = ["kod_markera", "hodnota_markera", "kod_ms"]
 
     df = df[~df.kod_vykonu.str.startswith("m")]
 
@@ -203,7 +203,7 @@ def load_priloha_8a(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     df = strip_df(df)
 
     markers = df[df.kod_vykonu.str.startswith("m")].copy().drop("nazov_ms", axis=1).reset_index(drop=True)
-    markers.columns = ["kod_markera", "nazov_markera", "kod_ms"]
+    markers.columns = ["kod_markera", "hodnota_markera", "kod_ms"]
 
     df = df[~df.kod_vykonu.str.startswith("m")]
 
@@ -254,7 +254,7 @@ def load_priloha_9a(xlsx_path: str | Path) -> pd.DataFrame:
     """
     df = pd.read_excel(xlsx_path, names=PRILOHY.P9a["columns"], dtype=str)
     df_markera = filter_valid_kod_ms(df, col_kod_ms="kod_hlavnej_diagnozy")
-    kod_markera, nazov_markera, _, kod_ms, nazov_ms = df_markera.loc[0].values
+    kod_markera, hodnota_markera, _, kod_ms, nazov_ms = df_markera.loc[0].values
 
     # diagnozy
     df = df.dropna(subset="kod_hlavnej_diagnozy").reset_index(drop=True)
@@ -263,9 +263,9 @@ def load_priloha_9a(xlsx_path: str | Path) -> pd.DataFrame:
     first_diag_idx = df["kod_hlavnej_diagnozy"][df["kod_hlavnej_diagnozy"] == first_diag].index[0]
     df = df.iloc[first_diag_idx:].reset_index(drop=True)
 
-    df = df.drop(["kod_markera", "nazov_markera"], axis=1)
+    df = df.drop(["kod_markera", "hodnota_markera"], axis=1)
     df["kod_markera"] = kod_markera
-    df["nazov_markera"] = nazov_markera
+    df["hodnota_markera"] = hodnota_markera
     df["kod_ms"] = kod_ms
     df["nazov_ms"] = nazov_ms
 
