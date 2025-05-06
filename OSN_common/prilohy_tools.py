@@ -158,7 +158,7 @@ def load_priloha_7a(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     df = strip_df(df)
 
     markers = df[df.kod_vykonu.str.startswith("m")].copy().drop("nazov_ms", axis=1).reset_index(drop=True)
-    markers.columns = ["kod_markera", "nazov_markera", "kod_ms"]
+    markers.columns = ["kod_markera", "hodnota_markera", "kod_ms"]
 
     df = df[~df.kod_vykonu.str.startswith("m")]
 
@@ -203,7 +203,7 @@ def load_priloha_8a(xlsx_path: str | Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     df = strip_df(df)
 
     markers = df[df.kod_vykonu.str.startswith("m")].copy().drop("nazov_ms", axis=1).reset_index(drop=True)
-    markers.columns = ["kod_markera", "nazov_markera", "kod_ms"]
+    markers.columns = ["kod_markera", "hodnota_markera", "kod_ms"]
 
     df = df[~df.kod_vykonu.str.startswith("m")]
 
