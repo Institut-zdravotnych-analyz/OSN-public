@@ -432,7 +432,7 @@ class PrilohyXlsxMeta:
     P9a = {
         "columns": [
             "kod_markera",
-            "nazov_markera",
+            "hodnota_markera",
             "skupina_diagnoz",
             "kod_hlavnej_diagnozy",
             "nazov_hlavnej_diagnozy",
@@ -673,7 +673,7 @@ class PrilohyXlsxMeta:
     }
 
     P17 = {
-        "columns": ["kod_markera", "nazov_markera", "kod_ms", "nazov_ms"],
+        "columns": ["kod_markera", "hodnota_markera", "kod_ms", "nazov_ms"],
         "description": 'V hospitalizačných prípadoch, v ktorých bol vykázaný marker podľa stĺpca "Kód markera", s hodnotou markera podľa stĺpca "Hodnota markera", hospitalizácii sa určí medicínska služby podľa stĺpca "Medicínska služba".',
         "file": "17_Sposob urcenia medicinskej sluzby pre program 98.xlsx",
         "index": "17",
