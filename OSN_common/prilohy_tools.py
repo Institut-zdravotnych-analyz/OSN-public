@@ -284,7 +284,10 @@ def load_priloha_10(
 
     # vedlajsia diagnoza
     df_vd = filter_valid_kod_ms(df)
-    diags_vd = set(df_vd["kod_hlavnej_diagnozy"])
+    df_vd = df_vd.rename(
+        columns={"kod_hlavnej_diagnozy": "kod_vedlajsej_diagnozy", "nazov_hlavnej_diagnozy": "nazov_vedlajsej_diagnozy"}
+    )
+    diags_vd = set(df_vd["kod_vedlajsej_diagnozy"])
     df_dospeli = df_vd.head(1)
     df_deti = df_vd.loc[1:]
 
