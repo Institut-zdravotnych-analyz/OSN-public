@@ -14,7 +14,7 @@ LOG_COLOR_SCHEME = FrozenDict(
     }
 )
 
-LOG_FMT_FILE = "%(asctime)s %(levelname)8s -- %(message)s"
+LOG_FMT_FILE = "%(levelname)8s -- %(message)s"
 LOG_FMT_CONSOLE = "%(log_color)s%(asctime)s %(levelname)8s -- %(reset)s%(white)s%(message)s"
 
 ### CONVERTERS
