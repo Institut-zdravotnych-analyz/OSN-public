@@ -230,7 +230,7 @@ def load_priloha_9(
 
     # Diags part
     # TODO: make this more robust (don't rely on the order of rows)
-    first_diag = "c910-"
+    first_diag = "c910-" if "c910-" in df["kod_ms"].values else "c9100"
     first_diag_idx = df["kod_ms"][df["kod_ms"] == first_diag].index[0]
     df_diags = df.iloc[first_diag_idx:].reset_index(drop=True)
     df_diags = df_diags.drop(["kod_hlavneho_vykonu", "nazov_hlavneho_vykonu"], axis=1)
