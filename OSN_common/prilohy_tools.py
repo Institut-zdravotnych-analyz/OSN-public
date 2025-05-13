@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Any
 
+import docx
 import pandas as pd
 from xlsxwriter.workbook import Workbook
 
@@ -84,8 +85,12 @@ def load_priloha_2(xlsx_path: str | Path) -> pd.DataFrame:
     return df
 
 
-def load_priloha_3(xlsx_path: str | Path) -> pd.DataFrame:  # noqa: D103
-    raise NotImplementedError("Cannot load since Príloha 3 is a full-text DOCX document.")
+def load_priloha_3(docx_path: str | Path) -> list[str]:
+    """Load text data from DOCX file of Príloha 3"""
+    p3 = docx.Document(str(docx_path))
+    paragraphs = [paragraph.text for paragraph in p3.paragraphs]
+    logger.debug(f"Loaded {len(paragraphs)} paragraphs of DOCX Príloha 3")
+    return paragraphs
 
 
 def load_priloha_4(xlsx_path: str | Path) -> pd.DataFrame:  # noqa: D103
