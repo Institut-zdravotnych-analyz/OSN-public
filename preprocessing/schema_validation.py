@@ -12,7 +12,7 @@ schema_01_UZS_JZS = pa.DataFrameSchema(
             str,
             checks=[
                 pa.Check.str_length(1, 20),
-                pa.Check(lambda g: g[].notna(), groupby="STAROST_TYP"),
+                pa.Check(lambda g: g["UH"].notna() & g["DRG"].notna(), groupby="STAROST_TYP"),
             ],
             nullable=True,
         ),
